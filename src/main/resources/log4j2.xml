@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" name="psp" packages="" monitorInterval="30">
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg{nolookups}" />
+        </Console>
+
+        <RollingFile name="RollingFile" fileName="${sys:log}"
+                     filePattern="${sys:log}.%d{yyyy-MM-dd}.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t]  %-5level %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="CONSOLE" />
+        </Root>
+
+        <Logger name="com.asia.leadsgen.fmerch" level="info">
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+    </Loggers>
+</Configuration>
