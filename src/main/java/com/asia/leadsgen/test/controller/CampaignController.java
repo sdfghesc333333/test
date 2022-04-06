@@ -66,28 +66,28 @@ public class CampaignController {
 	}
 
 //	Route::get('/campaigns/{campaign_id}', [CampaignController::class, 'getCampaign']);
-	@GetMapping("/{campaignId}")
+	@GetMapping("/{campaign_id}")
 	public ResponseEntity<Map> getCampaign(@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable Long campaignId) {
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.getCampaign(campaignId, userId), HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}', [CampaignController::class, 'updateCampaign']);
-	@PutMapping("/{campaignId}")
+	@PutMapping("/{campaign_id}")
 	public ResponseEntity<Map> updateCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable Long campaignId,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId,
 			@RequestBody CampaignEntity campaignRequest) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest, userId, campaignId), HttpStatus.OK);
 	}
 
 //	Route::delete('/campaigns/{campaign_id}', [CampaignController::class, 'deleteCampaign']);
-	@DeleteMapping("/{campaignId}")
+	@DeleteMapping("/{campaign_id}")
 	public ResponseEntity<Map> deleteCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable Long campaignId) {
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.deleteCampaign(campaignId, userId), HttpStatus.OK);
 	}
