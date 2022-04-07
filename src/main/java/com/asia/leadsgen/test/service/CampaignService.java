@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.asia.leadsgen.test.model.CampaignEntity;
+import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 
 @Service

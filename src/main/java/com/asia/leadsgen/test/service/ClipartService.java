@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.asia.leadsgen.test.model.ClipartEntity;
+import com.asia.leadsgen.test.model.entity.ClipartEntity;
 import com.asia.leadsgen.test.repository.ClipartRepository;
 
 @Service

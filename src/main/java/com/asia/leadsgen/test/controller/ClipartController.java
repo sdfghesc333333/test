@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.asia.leadsgen.test.model.CampaignEntity;
-import com.asia.leadsgen.test.model.ClipartEntity;
 import com.asia.leadsgen.test.model.UserInfo;
+import com.asia.leadsgen.test.model.entity.CampaignEntity;
+import com.asia.leadsgen.test.model.entity.ClipartEntity;
 import com.asia.leadsgen.test.repository.ClipartRepository;
 import com.asia.leadsgen.test.service.ClipartService;
 

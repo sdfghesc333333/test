@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.asia.leadsgen.test.model.CampaignEntity;
-import com.asia.leadsgen.test.model.ProductOptionEntity;
 import com.asia.leadsgen.test.model.UserInfo;
+import com.asia.leadsgen.test.model.entity.CampaignEntity;
+import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
 import com.asia.leadsgen.test.service.ProductOptionService;
 

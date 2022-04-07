@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.asia.leadsgen.test.model.ProductOptionEntity;
+import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 
 @Repository
 public interface ProductOptionRepository extends JpaRepository<ProductOptionEntity, Long> {

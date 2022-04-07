@@ -1,4 +1,4 @@
-package com.asia.leadsgen.test.model;
+package com.asia.leadsgen.test.model.entity;
 
 import java.util.Date;
 

@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.asia.leadsgen.test.model.CampaignEntity;
 import com.asia.leadsgen.test.model.ResultObjectInfo;
+import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.model.response.CampaignResponse;
 import com.asia.leadsgen.test.model.response.FmerchCampaignResponse;
 
