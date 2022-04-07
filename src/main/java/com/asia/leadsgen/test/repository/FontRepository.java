@@ -10,7 +10,7 @@ import com.asia.leadsgen.test.model.entity.FontEntity;
 
 @Repository
 public interface FontRepository extends JpaRepository<FontEntity, Long> {
-	Page<CampaignEntity> findAllByUserId(Pageable pageable, Long userId);
+	Page<FontEntity> findAllByUserId(Pageable pageable, Long userId);
 	
-	CampaignEntity findByIdAndUserIdAndStatus(Long id, Long userId, int status);
+//	CampaignEntity findByIdAndUserIdAndStatus(Long id, Long userId, int status);
 }

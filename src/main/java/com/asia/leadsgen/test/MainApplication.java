@@ -8,13 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.logging.Logger;
 
 @SpringBootApplication
-public class FMerchApplication implements CommandLineRunner {
+public class MainApplication implements CommandLineRunner {
 
 	@Value("${server.port}")
 	private String serverPort;
 
 	public static void main(String[] args) {
-		SpringApplication.run(FMerchApplication.class, args);
+		SpringApplication.run(MainApplication.class, args);
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class FMerchApplication implements CommandLineRunner {
 
 	}
 
-	private Logger logger = Logger.getLogger(FMerchApplication.class.getName());
+	private Logger logger = Logger.getLogger(MainApplication.class.getName());
 
 	public void setServerPort(String serverPort) {
 		this.serverPort = serverPort;

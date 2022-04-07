@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Entity
-@Table(name = "campaigns")
+@Table(name = "fonts")
 @Data
 public class FontEntity {
 
