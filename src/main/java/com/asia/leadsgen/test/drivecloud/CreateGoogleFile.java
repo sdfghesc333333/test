@@ -65,10 +65,10 @@ public class CreateGoogleFile {
 		return _createGoogleFile(googleFolderIdParent, contentType, customFileName, uploadStreamContent);
 	}
 
-//	public static String uploadGoogleDrive(String filePath) throws IOException {
-	public static void main(String[] args) throws IOException {
+	public static String uploadGoogleDrive(String filePath) throws IOException {
+//	public static void main(String[] args) throws IOException {
 
-		String filePath = "C:/Users/M710q/Desktop/CreateGoogleFile.txt";
+//		String filePath = "C:/Users/M710q/Desktop/CreateGoogleFile.txt";
 
 		java.io.File uploadFile = new java.io.File(filePath);
 
@@ -82,8 +82,7 @@ public class CreateGoogleFile {
 		System.out.println("WebContentLink: " + googleFile.getWebContentLink());
 		System.out.println("getWebViewLink: " + googleFile.getWebViewLink());
 
-		
-//		return googleFile.getWebContentLink();
+		return googleFile.getWebViewLink();
 	}
 
 }
