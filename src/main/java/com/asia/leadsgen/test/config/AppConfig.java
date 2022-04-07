@@ -1,21 +1,20 @@
 package com.asia.leadsgen.test.config;
 
-import com.asia.leadsgen.test.interceptor.AppInterceptor;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.sql.DataSource;
-import java.util.Objects;
-import java.util.Properties;
+import com.asia.leadsgen.test.interceptor.AppInterceptor;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
+@SuppressWarnings("deprecation")
 @Configuration
 @PropertySource("classpath:application.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {

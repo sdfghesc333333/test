@@ -1,7 +1,5 @@
 package com.asia.leadsgen.test.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class ApiError {
     private int status;
     private String message;

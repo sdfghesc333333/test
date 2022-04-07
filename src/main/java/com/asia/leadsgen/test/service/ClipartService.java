@@ -9,7 +9,7 @@ import com.asia.leadsgen.test.model.entity.ClipartEntity;
 import com.asia.leadsgen.test.repository.ClipartRepository;
 
 @Service
-@SuppressWarnings({ "unchecked", "rawtypes" })
+//@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ClipartService {
 
 	@Autowired

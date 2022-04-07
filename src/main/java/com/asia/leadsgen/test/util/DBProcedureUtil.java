@@ -27,7 +27,8 @@ public class DBProcedureUtil {
     @Autowired
     DataSource dataSource;
 
-    public Map execute(String procedureCallStr, Map<Integer, Object> inputParams,
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Map execute(String procedureCallStr, Map<Integer, Object> inputParams,
                               Map<Integer, Integer> outputParamsTypes, Map<Integer, String> outputParamsName) throws SQLException {
         Map resultMap = new LinkedHashMap<>();
         try (

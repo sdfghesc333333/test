@@ -14,7 +14,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<ProductInfo> getListProductByCampaignId(String campaignId) {
         String sql = "select product.S_ID as id, product.S_NAME as name, product.S_CAMPAIGN_ID," +
                 "variant.S_FRONT_IMG_URL as img_front, variant.S_BACK_IMG_URL as img_back, price.PAYOUT " +

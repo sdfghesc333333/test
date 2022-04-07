@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 public class DateTimeUtil {
 
-    private static final String DEFAULT_TIMEZONE_PREFIX = "UTC";
+//	private static final String DEFAULT_TIMEZONE_PREFIX = "UTC";
 
     public static String convertDateToDefaultTimezone(String dateInString, String clientTimezone)
             throws ParseException {

@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
-import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.model.entity.FontEntity;
-import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.repository.FontRepository;
 import com.asia.leadsgen.test.service.CampaignService;
 
-@SuppressWarnings("rawtypes")
+//@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "/fonts")

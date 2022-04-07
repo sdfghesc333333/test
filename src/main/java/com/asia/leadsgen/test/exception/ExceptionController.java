@@ -1,17 +1,15 @@
 package com.asia.leadsgen.test.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
 
 @ControllerAdvice
 public class ExceptionController {
