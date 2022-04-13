@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntity;
 import com.asia.leadsgen.test.repository.ClipartRepository;
+import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.ClipartService;
 
 //@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -27,13 +28,14 @@ import com.asia.leadsgen.test.service.ClipartService;
 @RequestMapping(path = "/cliparts")
 public class ClipartController {
 
-	protected long userId = 4075;
-
 	@Autowired
 	ClipartRepository clipartRepository;
 
 	@Autowired
 	ClipartService clipartService;
+
+	@Autowired
+	UserRepository userRepository;
 
 //	Route::get('/cliparts', [ClipartController::class, 'list']);
 	@GetMapping()
@@ -42,8 +44,9 @@ public class ClipartController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
-		Page<ClipartEntity> clipartnEntity = clipartRepository
-				.findAllByUserId(PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()), userId);
+		Page<ClipartEntity> clipartnEntity = clipartRepository.findAllByUserId(
+				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
+				userRepository.findByAffId(userInfo.getUserId()).getId());
 		return new ResponseEntity<>(clipartnEntity, HttpStatus.OK);
 	}
 
@@ -54,6 +57,8 @@ public class ClipartController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody ClipartEntity clipartRequest) {
 
-		return new ResponseEntity<>(clipartService.createClipart(clipartRequest, userId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				clipartService.createClipart(clipartRequest, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				HttpStatus.OK);
 	}
 }

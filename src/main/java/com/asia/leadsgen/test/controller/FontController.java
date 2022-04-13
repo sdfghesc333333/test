@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
-import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.model.entity.FontEntity;
 import com.asia.leadsgen.test.repository.FontRepository;
-import com.asia.leadsgen.test.service.CampaignService;
+import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.FontService;
 
 //@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -30,14 +29,14 @@ import com.asia.leadsgen.test.service.FontService;
 @CrossOrigin("*")
 @RequestMapping(path = "/fonts")
 public class FontController {
-
-	protected long userId = 4075;
-
 	@Autowired
 	FontRepository fontRepository;
 
 	@Autowired
 	FontService fontService;
+
+	@Autowired
+	UserRepository userRepository;
 
 //	Route::get('/fonts', [FontController::class, 'list']);
 	@GetMapping()
@@ -47,8 +46,9 @@ public class FontController {
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
 
-		Page<FontEntity> fontEntity = fontRepository
-				.findAllByUserId(PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()), userId);
+		Page<FontEntity> fontEntity = fontRepository.findAllByUserId(
+				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
+				userRepository.findByAffId(userInfo.getUserId()).getId());
 		return new ResponseEntity<>(fontEntity, HttpStatus.OK);
 	}
 
@@ -59,6 +59,8 @@ public class FontController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody FontEntity fontEntity) throws IOException {
 
-		return new ResponseEntity<>(fontService.createFont(fontEntity, userId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				fontService.createFont(fontEntity, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				HttpStatus.OK);
 	}
 }

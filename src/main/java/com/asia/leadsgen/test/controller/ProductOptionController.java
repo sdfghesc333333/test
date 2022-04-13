@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
+import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.ProductOptionService;
 
 @SuppressWarnings("rawtypes")
@@ -31,14 +32,14 @@ import com.asia.leadsgen.test.service.ProductOptionService;
 @CrossOrigin("*")
 @RequestMapping(path = "campaigns/{campaign_id}/options")
 public class ProductOptionController {
-
-	protected long userId = 4075;
-
 	@Autowired
 	ProductOptionService productOptionService;
 
 	@Autowired
 	ProductOptionRepository productOptionRepository;
+
+	@Autowired
+	UserRepository userRepository;
 
 //	Route::get('/campaigns/{campaign_id}/options', [ProductOptionController::class, 'list']);
 	@GetMapping()
@@ -50,7 +51,8 @@ public class ProductOptionController {
 			@PathVariable(name = "campaign_id") Long campaignId) {
 //		logger.info(campaignId);
 		Page<ProductOptionEntity> productOptionEntity = productOptionRepository.findAllByUserIdAndCampaignId(
-				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()), userId, campaignId);
+				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
+				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId);
 		return new ResponseEntity<>(productOptionEntity, HttpStatus.OK);
 	}
 
@@ -62,8 +64,8 @@ public class ProductOptionController {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 
-		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity, userId, campaignId),
-				HttpStatus.OK);
+		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity,
+				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId), HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
@@ -74,8 +76,8 @@ public class ProductOptionController {
 			@RequestBody ProductOptionEntity productOptionEntity) {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
-		return new ResponseEntity<>(
-				productOptionService.updateOption(productOptionEntity, userId, campaignId, optionId), HttpStatus.OK);
+		return new ResponseEntity<>(productOptionService.updateOption(productOptionEntity,
+				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId, optionId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());

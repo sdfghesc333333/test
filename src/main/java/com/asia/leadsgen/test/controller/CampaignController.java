@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
+import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.CampaignService;
 
 @SuppressWarnings("rawtypes")
@@ -33,13 +34,14 @@ import com.asia.leadsgen.test.service.CampaignService;
 @RequestMapping(path = "/campaigns")
 public class CampaignController {
 
-	protected long userId = 4075;
-
 	@Autowired
 	CampaignRepository campaignRepository;
 
 	@Autowired
 	CampaignService campaignService;
+
+	@Autowired
+	UserRepository userRepository;
 
 //	Route::get('/campaigns', [CampaignController::class, 'list']);
 	@GetMapping()
@@ -48,9 +50,11 @@ public class CampaignController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
-		logger.info("user_info " + userInfo);
-		Page<CampaignEntity> campaignEntity = campaignRepository
-				.findAllByUserId(PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()), userId);
+
+		logger.info("user_info " + userRepository.findByAffId(userInfo.getUserId()).getId());
+		Page<CampaignEntity> campaignEntity = campaignRepository.findAllByUserId(
+				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
+				userRepository.findByAffId(userInfo.getUserId()).getId());
 		return new ResponseEntity<>(campaignEntity, HttpStatus.OK);
 	}
 
@@ -62,34 +66,42 @@ public class CampaignController {
 			@RequestBody CampaignEntity campaignRequest) {
 		logger.info("user_info " + userInfo);
 
-		return new ResponseEntity<>(campaignService.createCampaign(campaignRequest, userId), HttpStatus.OK);
+		return new ResponseEntity<>(campaignService.createCampaign(campaignRequest,
+				userRepository.findByAffId(userInfo.getUserId()).getId()), HttpStatus.OK);
 	}
 
 //	Route::get('/campaigns/{campaign_id}', [CampaignController::class, 'getCampaign']);
 	@GetMapping("/{campaign_id}")
 	public ResponseEntity<Map> getCampaign(@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId) {
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
-		return new ResponseEntity<>(campaignService.getCampaign(campaignId, userId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				campaignService.getCampaign(campaignId, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}', [CampaignController::class, 'updateCampaign']);
 	@PutMapping("/{campaign_id}")
 	public ResponseEntity<Map> updateCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId,
-			@RequestBody CampaignEntity campaignRequest) {
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest) {
 		logger.info("user_info " + userInfo);
-		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest, userId, campaignId), HttpStatus.OK);
+		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest,
+				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId), HttpStatus.OK);
 	}
 
 //	Route::delete('/campaigns/{campaign_id}', [CampaignController::class, 'deleteCampaign']);
 	@DeleteMapping("/{campaign_id}")
 	public ResponseEntity<Map> deleteCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo, @PathVariable(name = "campaign_id") Long campaignId) {
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
-		return new ResponseEntity<>(campaignService.deleteCampaign(campaignId, userId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				campaignService.deleteCampaign(campaignId, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(CampaignController.class.getName());
