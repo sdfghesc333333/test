@@ -3,6 +3,8 @@ package com.asia.leadsgen.test.controller;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.security.auth.login.LoginException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
-import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.ProductOptionService;
+import com.asia.leadsgen.test.service.UserService;
 
 @SuppressWarnings("rawtypes")
 @RestController
@@ -39,7 +41,7 @@ public class ProductOptionController {
 	ProductOptionRepository productOptionRepository;
 
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 
 //	Route::get('/campaigns/{campaign_id}/options', [ProductOptionController::class, 'list']);
 	@GetMapping()
@@ -48,11 +50,11 @@ public class ProductOptionController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
-			@PathVariable(name = "campaign_id") Long campaignId) {
+			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException {
 //		logger.info(campaignId);
 		Page<ProductOptionEntity> productOptionEntity = productOptionRepository.findAllByUserIdAndCampaignId(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId);
+				userService.getUser(userInfo).getId(), campaignId);
 		return new ResponseEntity<>(productOptionEntity, HttpStatus.OK);
 	}
 
@@ -60,12 +62,13 @@ public class ProductOptionController {
 	@PostMapping()
 	public ResponseEntity<Map> create(@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity) {
+			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity)
+			throws LoginException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 
 		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity,
-				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId), HttpStatus.OK);
+				userService.getUser(userInfo).getId(), campaignId), HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
@@ -73,11 +76,11 @@ public class ProductOptionController {
 	public ResponseEntity<Map> update(@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
-			@RequestBody ProductOptionEntity productOptionEntity) {
+			@RequestBody ProductOptionEntity productOptionEntity) throws LoginException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(productOptionService.updateOption(productOptionEntity,
-				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId, optionId), HttpStatus.OK);
+				userService.getUser(userInfo).getId(), campaignId, optionId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());

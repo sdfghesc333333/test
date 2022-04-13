@@ -1,5 +1,7 @@
 package com.asia.leadsgen.test.controller;
 
+import javax.security.auth.login.LoginException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntity;
 import com.asia.leadsgen.test.repository.ClipartRepository;
-import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.ClipartService;
+import com.asia.leadsgen.test.service.UserService;
 
 //@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
@@ -35,7 +37,7 @@ public class ClipartController {
 	ClipartService clipartService;
 
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 
 //	Route::get('/cliparts', [ClipartController::class, 'list']);
 	@GetMapping()
@@ -43,10 +45,10 @@ public class ClipartController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
 		Page<ClipartEntity> clipartnEntity = clipartRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
+				userService.getUser(userInfo).getId(), null);
 		return new ResponseEntity<>(clipartnEntity, HttpStatus.OK);
 	}
 
@@ -55,10 +57,9 @@ public class ClipartController {
 	public ResponseEntity<ClipartEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntity clipartRequest) {
+			@RequestBody ClipartEntity clipartRequest) throws LoginException {
 
-		return new ResponseEntity<>(
-				clipartService.createClipart(clipartRequest, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
+		return new ResponseEntity<>(clipartService.createClipart(clipartRequest, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);
 	}
 }

@@ -2,6 +2,8 @@ package com.asia.leadsgen.test.controller;
 
 import java.io.IOException;
 
+import javax.security.auth.login.LoginException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.FontEntity;
 import com.asia.leadsgen.test.repository.FontRepository;
-import com.asia.leadsgen.test.repository.UserRepository;
 import com.asia.leadsgen.test.service.FontService;
+import com.asia.leadsgen.test.service.UserService;
 
 //@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
@@ -36,7 +38,7 @@ public class FontController {
 	FontService fontService;
 
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 
 //	Route::get('/fonts', [FontController::class, 'list']);
 	@GetMapping()
@@ -44,11 +46,11 @@ public class FontController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
 
 		Page<FontEntity> fontEntity = fontRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
+				userService.getUser(userInfo).getId(), null);
 		return new ResponseEntity<>(fontEntity, HttpStatus.OK);
 	}
 
@@ -57,10 +59,9 @@ public class FontController {
 	public ResponseEntity<FontEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody FontEntity fontEntity) throws IOException {
+			@RequestBody FontEntity fontEntity) throws IOException, LoginException {
 
-		return new ResponseEntity<>(
-				fontService.createFont(fontEntity, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
+		return new ResponseEntity<>(fontService.createFont(fontEntity, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);
 	}
 }
