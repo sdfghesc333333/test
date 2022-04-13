@@ -39,4 +39,41 @@ public class MockupService {
 			throw new NotFoundException("Mockup not exist");
 		}
 	}
+
+	public MockupEntity edit(Long mockupId, Long userId, MockupEntity mockupRequest)
+			throws IOException, OracleSQLException {
+		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
+		if (ObjectUtils.isNotEmpty(mockupEntity)) {
+			mockupEntity.setUserId(userId);
+			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupRequest.getFilePath()));
+			mockupEntity.setWidth(mockupRequest.getWidth());
+			mockupEntity.setHeight(mockupRequest.getHeight());
+			mockupEntity.setConditions(mockupRequest.getConditions());
+			mockupEntity.setName(mockupRequest.getName());
+			mockupEntity.setPrintareas(mockupRequest.getPrintareas());
+			mockupEntity.setUpdatedAt(new Date());
+			if (ObjectUtils.isNotEmpty(mockupRepository.save(mockupEntity))) {
+				return mockupRepository.save(mockupEntity);
+			} else {
+				throw new OracleSQLException();
+			}
+		} else {
+			throw new NotFoundException("Mockup not exist");
+		}
+	}
+
+	public String delete(Long mockupId, Long userId) throws OracleSQLException {
+		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
+		if (ObjectUtils.isNotEmpty(mockupEntity)) {
+			mockupEntity.setDeletedAt(new Date());
+			if (ObjectUtils.isNotEmpty(mockupRepository.save(mockupEntity))) {
+				mockupRepository.save(mockupEntity);
+				return "msg : Success";
+			} else {
+				throw new OracleSQLException();
+			}
+		} else {
+			throw new NotFoundException("Mockup not exist");
+		}
+	}
 }

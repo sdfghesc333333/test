@@ -52,14 +52,15 @@ public class CampaignService {
 		}
 	}
 
-	public CampaignEntity deleteCampaign(long campaignId, long userId) throws OracleSQLException {
+	public String deleteCampaign(long campaignId, long userId) throws OracleSQLException {
 		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1,
 				null);
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			campaignEntity.setStatus(0);
 			campaignEntity.setDeletedAt(new Date());
 			if (ObjectUtils.isNotEmpty(campaignRepository.save(campaignEntity))) {
-				return campaignRepository.save(campaignEntity);
+				campaignRepository.save(campaignEntity);
+				return "msg : Success";
 			} else {
 				throw new OracleSQLException();
 			}

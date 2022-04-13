@@ -11,9 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -68,11 +70,32 @@ public class MockupController {
 				HttpStatus.OK);
 	}
 
+//	Route::get('/mockups/{mockup_id}', [MockupController::class, 'get']);
 	@GetMapping("/{mockup_id}")
 	public ResponseEntity<MockupEntity> get(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "mockup_id") Long mockupId) throws LoginException {
 		return new ResponseEntity<>(mockupService.get(mockupId, userService.getUser(userInfo).getId()), HttpStatus.OK);
+	}
+
+//	Route::put('/mockups/{mockup_id}', [MockupController::class, 'edit']);
+	@PutMapping("/{mockup_id}")
+	public ResponseEntity<MockupEntity> edit(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupEntity mockupRequest)
+			throws LoginException, OracleSQLException, IOException {
+		return new ResponseEntity<>(mockupService.edit(mockupId, userService.getUser(userInfo).getId(), mockupRequest),
+				HttpStatus.OK);
+	}
+
+//	Route::delete('/mockups/{mockup_id}', [MockupController::class, 'delete']);
+	@DeleteMapping("/{mockup_id}")
+	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId) throws LoginException, OracleSQLException, IOException {
+		return new ResponseEntity<>(mockupService.delete(mockupId, userService.getUser(userInfo).getId()),
+				HttpStatus.OK);
 	}
 }

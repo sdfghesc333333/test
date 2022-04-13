@@ -110,7 +110,7 @@ public class CampaignController {
 
 //	Route::delete('/campaigns/{campaign_id}', [CampaignController::class, 'deleteCampaign']);
 	@DeleteMapping("/{campaign_id}")
-	public ResponseEntity<CampaignEntity> deleteCampaign(
+	public ResponseEntity<String> deleteCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException, OracleSQLException {
