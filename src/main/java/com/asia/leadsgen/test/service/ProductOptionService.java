@@ -1,20 +1,20 @@
 package com.asia.leadsgen.test.service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
 
+import oracle.jdbc.driver.OracleSQLException;
+
 @Service
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ProductOptionService {
 
 	@Autowired
@@ -23,26 +23,29 @@ public class ProductOptionService {
 	@Autowired
 	ProductOptionRepository productOptionRepository;
 
-	public Map createProductOption(ProductOptionEntity productOptionEntity, long userId, long campaignId) {
-
-		Map result = new HashMap<>();
+	public ProductOptionEntity createProductOption(ProductOptionEntity productOptionEntity, long userId,
+			long campaignId) throws OracleSQLException {
 
 		if (ObjectUtils
 				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
-			result.put("errors", "Campaign not exist!");
+			throw new NotFoundException("Campaign not exist");
 		} else {
 			productOptionEntity.setUserId(userId);
 			productOptionEntity.setCampaignId(campaignId);
 			productOptionEntity.setCreatedAt(new Date());
-			result.put("data", productOptionRepository.save(productOptionEntity));
+			if (ObjectUtils.isNotEmpty(productOptionRepository.save(productOptionEntity))) {
+				return productOptionRepository.save(productOptionEntity);
+			} else {
+				throw new OracleSQLException();
+			}
 		}
-		return result;
 	}
 
-	public Map updateOption(ProductOptionEntity productOptionEntity, long userId, long campaignId, long optionId) {
-		Map result = new HashMap<>();
+	public ProductOptionEntity updateOption(ProductOptionEntity productOptionEntity, long userId, long campaignId,
+			long optionId) throws OracleSQLException {
+		
 		if (ObjectUtils.isEmpty(productOptionRepository.findByIdAndUserIdAndCampaignId(optionId, userId, campaignId))) {
-			result.put("errors", "Option not exist!");
+			throw new NotFoundException("Option not exist");
 		} else {
 			ProductOptionEntity optionEntity = productOptionRepository.findByIdAndUserIdAndCampaignId(optionId, userId,
 					campaignId);
@@ -53,10 +56,11 @@ public class ProductOptionService {
 			logger.info("product option : " + optionEntity);
 
 			if (ObjectUtils.isNotEmpty(productOptionRepository.save(optionEntity))) {
-				result.put("msg", "Success");
+				return productOptionRepository.save(optionEntity);
+			} else {
+				throw new OracleSQLException();
 			}
 		}
-		return result;
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionService.class.getName());

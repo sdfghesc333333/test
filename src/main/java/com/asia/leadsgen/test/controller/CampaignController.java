@@ -1,6 +1,5 @@
 package com.asia.leadsgen.test.controller;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
@@ -30,7 +29,8 @@ import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.service.CampaignService;
 import com.asia.leadsgen.test.service.UserService;
 
-@SuppressWarnings("rawtypes")
+import oracle.jdbc.driver.OracleSQLException;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "/campaigns")
@@ -54,9 +54,6 @@ public class CampaignController {
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
 
 		logger.info("user_info " + userService.getUser(userInfo).getId());
-//		Page<CampaignEntity> campaignEntity = campaignRepository.findAllByUserIdAndDeletedAt(
-//				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-//				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
 		Page<CampaignEntity> campaignEntity = campaignRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
 				userService.getUser(userInfo).getId(), null);
@@ -68,16 +65,17 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody CampaignEntity campaignRequest) throws LoginException {
+			@RequestBody CampaignEntity campaignRequest) throws LoginException, OracleSQLException {
 		logger.info("user_info " + userInfo);
 
-		return new ResponseEntity<>(
-				campaignService.createCampaign(campaignRequest, userService.getUser(userInfo).getId()), HttpStatus.OK);
+		return new ResponseEntity<>(campaignService.create(campaignRequest, userService.getUser(userInfo).getId()),
+				HttpStatus.OK);
 	}
 
 //	Route::get('/campaigns/{campaign_id}', [CampaignController::class, 'getCampaign']);
 	@GetMapping("/{campaign_id}")
-	public ResponseEntity<Map> getCampaign(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+	public ResponseEntity<CampaignEntity> getCampaign(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException {
 		logger.info("user_info " + userInfo);
@@ -86,12 +84,24 @@ public class CampaignController {
 	}
 
 //	Route::put('/campaigns/{campaign_id}', [CampaignController::class, 'updateCampaign']);
+//	@PutMapping("/{campaign_id}")
+//	public ResponseEntity<Map> updateCampaign(
+//			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+//			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+//			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
+//			throws LoginException {
+//		logger.info("user_info " + userInfo);
+//		return new ResponseEntity<>(
+//				campaignService.updateCampaign(campaignRequest, userService.getUser(userInfo).getId(), campaignId),
+//				HttpStatus.OK);
+//	}
+
 	@PutMapping("/{campaign_id}")
-	public ResponseEntity<Map> updateCampaign(
+	public ResponseEntity<CampaignEntity> updateCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
-			throws LoginException {
+			throws LoginException, OracleSQLException {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
 				campaignService.updateCampaign(campaignRequest, userService.getUser(userInfo).getId(), campaignId),
@@ -100,10 +110,10 @@ public class CampaignController {
 
 //	Route::delete('/campaigns/{campaign_id}', [CampaignController::class, 'deleteCampaign']);
 	@DeleteMapping("/{campaign_id}")
-	public ResponseEntity<Map> deleteCampaign(
+	public ResponseEntity<CampaignEntity> deleteCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException {
+			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException, OracleSQLException {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.deleteCampaign(campaignId, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);

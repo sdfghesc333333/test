@@ -24,6 +24,8 @@ import com.asia.leadsgen.test.repository.ClipartRepository;
 import com.asia.leadsgen.test.service.ClipartService;
 import com.asia.leadsgen.test.service.UserService;
 
+import oracle.jdbc.driver.OracleSQLException;
+
 //@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
 @CrossOrigin("*")
@@ -57,9 +59,9 @@ public class ClipartController {
 	public ResponseEntity<ClipartEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntity clipartRequest) throws LoginException {
+			@RequestBody ClipartEntity clipartRequest) throws LoginException, OracleSQLException {
 
-		return new ResponseEntity<>(clipartService.createClipart(clipartRequest, userService.getUser(userInfo).getId()),
+		return new ResponseEntity<>(clipartService.create(clipartRequest, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);
 	}
 }

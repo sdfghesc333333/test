@@ -26,6 +26,8 @@ import com.asia.leadsgen.test.repository.FontRepository;
 import com.asia.leadsgen.test.service.FontService;
 import com.asia.leadsgen.test.service.UserService;
 
+import oracle.jdbc.driver.OracleSQLException;
+
 //@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
 @CrossOrigin("*")
@@ -59,9 +61,9 @@ public class FontController {
 	public ResponseEntity<FontEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody FontEntity fontEntity) throws IOException, LoginException {
+			@RequestBody FontEntity fontEntity) throws IOException, LoginException, OracleSQLException {
 
-		return new ResponseEntity<>(fontService.createFont(fontEntity, userService.getUser(userInfo).getId()),
+		return new ResponseEntity<>(fontService.create(fontEntity, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);
 	}
 }

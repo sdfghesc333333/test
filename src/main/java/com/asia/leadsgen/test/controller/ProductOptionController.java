@@ -1,6 +1,5 @@
 package com.asia.leadsgen.test.controller;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
@@ -29,7 +28,8 @@ import com.asia.leadsgen.test.repository.ProductOptionRepository;
 import com.asia.leadsgen.test.service.ProductOptionService;
 import com.asia.leadsgen.test.service.UserService;
 
-@SuppressWarnings("rawtypes")
+import oracle.jdbc.driver.OracleSQLException;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "campaigns/{campaign_id}/options")
@@ -60,10 +60,11 @@ public class ProductOptionController {
 
 //	Route::post('/campaigns/{campaign_id}/options', [ProductOptionController::class, 'create']);
 	@PostMapping()
-	public ResponseEntity<Map> create(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+	public ResponseEntity<ProductOptionEntity> create(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity)
-			throws LoginException {
+			throws LoginException, OracleSQLException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 
@@ -73,10 +74,11 @@ public class ProductOptionController {
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
 	@PutMapping("/{option_id}")
-	public ResponseEntity<Map> update(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+	public ResponseEntity<ProductOptionEntity> update(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
-			@RequestBody ProductOptionEntity productOptionEntity) throws LoginException {
+			@RequestBody ProductOptionEntity productOptionEntity) throws LoginException, OracleSQLException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(productOptionService.updateOption(productOptionEntity,

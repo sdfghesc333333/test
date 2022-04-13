@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,8 @@ import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.service.MockupService;
 import com.asia.leadsgen.test.service.UserService;
 
-//@SuppressWarnings({ "unchecked", "rawtypes" })
+import oracle.jdbc.driver.OracleSQLException;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "/mockups")
@@ -57,12 +59,20 @@ public class MockupController {
 
 //	Route::post('/mockups', [MockupController::class, 'add']);
 	@PostMapping()
-	public ResponseEntity<MockupEntity> create(
+	public ResponseEntity<MockupEntity> add(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody MockupEntity mockupEntity) throws IOException, LoginException {
+			@RequestBody MockupEntity mockupEntity) throws IOException, LoginException, OracleSQLException {
 
-		return new ResponseEntity<>(mockupService.createMockup(mockupEntity, userService.getUser(userInfo).getId()),
+		return new ResponseEntity<>(mockupService.add(mockupEntity, userService.getUser(userInfo).getId()),
 				HttpStatus.OK);
+	}
+
+	@GetMapping("/{mockup_id}")
+	public ResponseEntity<MockupEntity> get(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId) throws LoginException {
+		return new ResponseEntity<>(mockupService.get(mockupId, userService.getUser(userInfo).getId()), HttpStatus.OK);
 	}
 }
