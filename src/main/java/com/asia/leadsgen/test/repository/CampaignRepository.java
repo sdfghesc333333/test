@@ -1,5 +1,7 @@
 package com.asia.leadsgen.test.repository;
 
+import java.util.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +11,7 @@ import com.asia.leadsgen.test.model.entity.CampaignEntity;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<CampaignEntity, Long> {
-	Page<CampaignEntity> findAllByUserId(Pageable pageable, Long userId);
+	Page<CampaignEntity> findAllByUserIdAndDeletedAt(Pageable pageable, Long userId, Date deletedAt);
 	
-	CampaignEntity findByIdAndUserIdAndStatus(Long id, Long userId, int status);
+	CampaignEntity findByIdAndUserIdAndStatusAndDeletedAt(Long id, Long userId, int status, Date deletedAt);
 }

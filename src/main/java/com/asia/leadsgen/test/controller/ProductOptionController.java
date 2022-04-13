@@ -52,7 +52,7 @@ public class ProductOptionController {
 //		logger.info(campaignId);
 		Page<ProductOptionEntity> productOptionEntity = productOptionRepository.findAllByUserIdAndCampaignId(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId);
 		return new ResponseEntity<>(productOptionEntity, HttpStatus.OK);
 	}
 
@@ -65,7 +65,7 @@ public class ProductOptionController {
 		logger.info("user_info " + userInfo);
 
 		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity,
-				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId), HttpStatus.OK);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId), HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
@@ -77,7 +77,7 @@ public class ProductOptionController {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(productOptionService.updateOption(productOptionEntity,
-				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId, optionId), HttpStatus.OK);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId, optionId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());

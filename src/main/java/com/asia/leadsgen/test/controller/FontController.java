@@ -46,9 +46,9 @@ public class FontController {
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
 
-		Page<FontEntity> fontEntity = fontRepository.findAllByUserId(
+		Page<FontEntity> fontEntity = fontRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffId(userInfo.getUserId()).getId());
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
 		return new ResponseEntity<>(fontEntity, HttpStatus.OK);
 	}
 
@@ -60,7 +60,7 @@ public class FontController {
 			@RequestBody FontEntity fontEntity) throws IOException {
 
 		return new ResponseEntity<>(
-				fontService.createFont(fontEntity, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				fontService.createFont(fontEntity, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
 				HttpStatus.OK);
 	}
 }

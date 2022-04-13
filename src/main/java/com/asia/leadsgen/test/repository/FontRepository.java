@@ -1,5 +1,7 @@
 package com.asia.leadsgen.test.repository;
 
+import java.util.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +11,5 @@ import com.asia.leadsgen.test.model.entity.FontEntity;
 
 @Repository
 public interface FontRepository extends JpaRepository<FontEntity, Long> {
-	Page<FontEntity> findAllByUserId(Pageable pageable, Long userId);
+	Page<FontEntity> findAllByUserIdAndDeletedAt(Pageable pageable, Long userId, Date deletedAt);
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
-import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.repository.UserRepository;
@@ -50,7 +49,7 @@ public class MockupController {
 
 		Page<MockupEntity> mockupEntity = mockupRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffId(userInfo.getUserId()).getId(), null);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
 		return new ResponseEntity<>(mockupEntity, HttpStatus.OK);
 	}
 
@@ -62,7 +61,7 @@ public class MockupController {
 			@RequestBody MockupEntity mockupEntity) throws IOException {
 
 		return new ResponseEntity<>(
-				mockupService.createMockup(mockupEntity, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				mockupService.createMockup(mockupEntity, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
 				HttpStatus.OK);
 	}
 }

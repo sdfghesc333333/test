@@ -30,7 +30,7 @@ public class CampaignService {
 
 	public Map updateCampaign(CampaignEntity campaignRequest, long userId, Long campaignId) {
 		Map result = new HashMap<>();
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatus(campaignId, userId, 1);
+		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null);
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			campaignEntity.setProductId(campaignRequest.getProductId());
 			campaignEntity.setHandle(campaignRequest.getHandle());
@@ -49,7 +49,7 @@ public class CampaignService {
 
 	public Map deleteCampaign(long campaignId, long userId) {
 		Map result = new HashMap<>();
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatus(campaignId, userId, 1);
+		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null);
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			campaignEntity.setStatus(0);
 			campaignEntity.setDeletedAt(new Date());
@@ -65,7 +65,7 @@ public class CampaignService {
 
 	public Map getCampaign(Long campaignId, Long userId) {
 		Map result = new HashMap<>();
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatus(campaignId, userId, 1);
+		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null);
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			result.put("data", campaignEntity);
 		} else {

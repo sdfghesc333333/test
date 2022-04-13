@@ -27,7 +27,8 @@ public class ProductOptionService {
 
 		Map result = new HashMap<>();
 
-		if (ObjectUtils.isEmpty(campaignRepository.findByIdAndUserIdAndStatus(campaignId, userId, 1))) {
+		if (ObjectUtils
+				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			result.put("errors", "Campaign not exist!");
 		} else {
 			productOptionEntity.setUserId(userId);

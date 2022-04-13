@@ -44,9 +44,9 @@ public class ClipartController {
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
-		Page<ClipartEntity> clipartnEntity = clipartRepository.findAllByUserId(
+		Page<ClipartEntity> clipartnEntity = clipartRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffId(userInfo.getUserId()).getId());
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
 		return new ResponseEntity<>(clipartnEntity, HttpStatus.OK);
 	}
 
@@ -58,7 +58,7 @@ public class ClipartController {
 			@RequestBody ClipartEntity clipartRequest) {
 
 		return new ResponseEntity<>(
-				clipartService.createClipart(clipartRequest, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				clipartService.createClipart(clipartRequest, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
 				HttpStatus.OK);
 	}
 }

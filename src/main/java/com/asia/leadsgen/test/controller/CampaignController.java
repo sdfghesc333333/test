@@ -51,10 +51,22 @@ public class CampaignController {
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
 
-		logger.info("user_info " + userRepository.findByAffId(userInfo.getUserId()).getId());
-		Page<CampaignEntity> campaignEntity = campaignRepository.findAllByUserId(
+		logger.info("user_info " + userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId());
+		Page<CampaignEntity> campaignEntity = campaignRepository.findAllByUserIdAndDeletedAt(
 				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userRepository.findByAffId(userInfo.getUserId()).getId());
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), null);
+		return new ResponseEntity<>(campaignEntity, HttpStatus.OK);
+	}
+	
+	@GetMapping("/v1")
+	public ResponseEntity<CampaignEntity> list1(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) {
+
+		logger.info("user_info " + userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId());
+		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(182L, 845L, 1, null);
 		return new ResponseEntity<>(campaignEntity, HttpStatus.OK);
 	}
 
@@ -67,7 +79,7 @@ public class CampaignController {
 		logger.info("user_info " + userInfo);
 
 		return new ResponseEntity<>(campaignService.createCampaign(campaignRequest,
-				userRepository.findByAffId(userInfo.getUserId()).getId()), HttpStatus.OK);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()), HttpStatus.OK);
 	}
 
 //	Route::get('/campaigns/{campaign_id}', [CampaignController::class, 'getCampaign']);
@@ -77,7 +89,7 @@ public class CampaignController {
 			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
-				campaignService.getCampaign(campaignId, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				campaignService.getCampaign(campaignId, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
 				HttpStatus.OK);
 	}
 
@@ -89,7 +101,7 @@ public class CampaignController {
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest,
-				userRepository.findByAffId(userInfo.getUserId()).getId(), campaignId), HttpStatus.OK);
+				userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId(), campaignId), HttpStatus.OK);
 	}
 
 //	Route::delete('/campaigns/{campaign_id}', [CampaignController::class, 'deleteCampaign']);
@@ -100,7 +112,7 @@ public class CampaignController {
 			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
-				campaignService.deleteCampaign(campaignId, userRepository.findByAffId(userInfo.getUserId()).getId()),
+				campaignService.deleteCampaign(campaignId, userRepository.findByAffIdAndDeletedAt(userInfo.getUserId(), null).getId()),
 				HttpStatus.OK);
 	}
 
