@@ -2,9 +2,6 @@ package com.asia.leadsgen.test.drivecloud;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,5 +81,21 @@ public class CreateGoogleFile {
 
 		return googleFile.getWebViewLink();
 	}
+	
+	public static String uploadMockupGoogleDrive(String filePath) throws IOException {
+
+			java.io.File uploadFile = new java.io.File(filePath);
+
+			String strPath = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+
+			// Create Google File:
+
+			File googleFile = createGoogleFile("16FmGDEvFK9DensCf6CYpLt09X1SFo87D", "image/jpeg", strPath, uploadFile);
+			System.out.println("Created Google file!");
+			System.out.println("WebContentLink: " + googleFile.getWebContentLink());
+			System.out.println("getWebViewLink: " + googleFile.getWebViewLink());
+
+			return googleFile.getWebViewLink();
+		}
 
 }
