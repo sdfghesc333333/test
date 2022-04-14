@@ -1,12 +1,9 @@
 package com.asia.leadsgen.test.model.response;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
@@ -17,12 +14,11 @@ import lombok.Data;
 
 @Entity
 @Data
-public class ServicePackRepository {
+public class ServicePackResponse {
 
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private String id;
 
 	@Column(name = "title")
 	private String title;
@@ -56,18 +52,18 @@ public class ServicePackRepository {
 
 	@Column(name = "deleted_at")
 	@JsonProperty(value = "deleted_at")
-	private Date deletedAt;
+	private String deletedAt;
 
 	@Column(name = "created_at")
 	@JsonProperty(value = "created_at")
-	private Date createdAt;
+	private String createdAt;
 
 	@Column(name = "updated_at")
 	@JsonProperty(value = "updated_at")
-	private Date updatedAt;
+	private String updatedAt;
 
 	@Transient
-	private List<ServiceEntity> service;
+	private List<ServiceResponse> service;
 	@Transient
 	private String limitCampaign;
 }
