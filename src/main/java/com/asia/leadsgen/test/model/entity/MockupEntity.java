@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.Data;
 
@@ -40,10 +41,12 @@ public class MockupEntity {
 	@Column(name = "width")
 	private String width;
 
-	@Column(name = "printareas")
+	@Column(name = "printareas", columnDefinition = "json")
+	@JsonRawValue
 	private String printareas;
 
-	@Column(name = "conditions")
+	@Column(name = "conditions", columnDefinition = "json")
+	@JsonRawValue
 	private String conditions;
 
 	@Column(name = "deleted_at")

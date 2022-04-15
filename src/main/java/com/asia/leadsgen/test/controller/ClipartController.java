@@ -1,9 +1,10 @@
 package com.asia.leadsgen.test.controller;
 
+import java.util.List;
+
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -43,15 +44,15 @@ public class ClipartController {
 
 //	Route::get('/cliparts', [ClipartController::class, 'list']);
 	@GetMapping()
-	public ResponseEntity<Page<ClipartEntity>> list(
+	public ResponseEntity<List<ClipartEntity>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
-		Page<ClipartEntity> clipartnEntity = clipartRepository.findAllByUserIdAndDeletedAt(
-				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userService.getUser(userInfo).getId(), null);
-		return new ResponseEntity<>(clipartnEntity, HttpStatus.OK);
+		List<ClipartEntity> clipartnEntities = clipartRepository.list(
+				PageRequest.of(page - 1, pageSize, Sort.by("created_at").descending()),
+				userService.getUser(userInfo).getId());
+		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
 	}
 
 //	Route::post('/clipart', [ClipartController::class, 'create']);

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.Data;
 
@@ -48,7 +49,8 @@ public class ProductOptionEntity {
 	@Column(name = "conditions")
 	private String conditions;
 
-	@Column(name = "settings")
+	@Column(name = "settings", columnDefinition = "json")
+	@JsonRawValue
 	private String settings;
 
 	@Column(name = "bound_settings")
