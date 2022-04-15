@@ -61,15 +61,15 @@ public class CampaignEntity {
 
 	@Column(name = "mockup_id")
 	@JsonProperty(value = "mockup_id")
-	private int mockupId;
+	private Long mockupId;
 
 	@Column(name = "fulfillment_id")
 	@JsonProperty(value = "fulfillment_id")
-	private int fulfillmentId;
+	private Long fulfillmentId;
 
 	@Column(name = "product_type_id")
 	@JsonProperty(value = "product_type_id")
-	private int productTypeId;
+	private Long productTypeId;
 
 	@Column(name = "status")
 	@JsonProperty(value = "status")
