@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.asia.leadsgen.test.model.entity.ServiceEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -40,15 +39,15 @@ public class ServicePackResponse {
 
 	@Column(name = "is_fullfeature")
 	@JsonProperty(value = "is_fullfeature")
-	private boolean isFullfeature;
+	private String isFullfeature;
 
 	@Column(name = "is_enterprise")
 	@JsonProperty(value = "is_enterprise")
-	private boolean isEnterprise;
+	private String isEnterprise;
 
 	@Column(name = "is_trial")
 	@JsonProperty(value = "is_trial")
-	private boolean isTrial;
+	private String isTrial;
 
 	@Column(name = "deleted_at")
 	@JsonProperty(value = "deleted_at")

@@ -27,6 +27,7 @@ public class PlanController {
 	@Autowired
 	ServicePackRepositoryImpl servicePackRepositoryImpl;
 
+//	Route::get('/packService', [PackServiceController::class, 'list']);
 	@GetMapping()
 	public ResponseEntity<List<ServicePackResponse>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,

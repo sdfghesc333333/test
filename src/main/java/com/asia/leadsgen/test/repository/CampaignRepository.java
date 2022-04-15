@@ -11,7 +11,11 @@ import com.asia.leadsgen.test.model.entity.CampaignEntity;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<CampaignEntity, Long> {
-	Page<CampaignEntity> findAllByUserIdAndDeletedAt(Pageable pageable, Long userId, Date deletedAt);
-	
+	Page<CampaignEntity> findAllByUserIdAndDeletedAtAndCreatedAtBetween(Pageable pageable, Long userId, Date deletedAt,
+			Date startDate, Date endDate);
+
 	CampaignEntity findByIdAndUserIdAndStatusAndDeletedAt(Long id, Long userId, int status, Date deletedAt);
+
+	Page<CampaignEntity> findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(Pageable pageable, Long userId, Date deletedAt,
+			String name, Date startDate, Date endDate);
 }

@@ -66,13 +66,13 @@ public class CampaignEntity {
 	@JsonProperty(value = "export_file_type_updated_at")
 	private Date exportFileTypeUpdatedAt;
 	
-	@Column(name = "deleted_at")
-	@JsonProperty(value = "deleted_at")
-	private Date deletedAt;
-	
 	@Column(name = "created_at")
 	@JsonProperty(value = "created_at")
 	private Date createdAt;
+	
+	@Column(name = "deleted_at")
+	@JsonProperty(value = "deleted_at")
+	private Date deletedAt;
 	
 	@Column(name = "updated_at")
 	@JsonProperty(value = "updated_at")

@@ -1,5 +1,7 @@
 package com.asia.leadsgen.test.repository;
 
+import java.util.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +16,6 @@ public interface ProductOptionRepository extends JpaRepository<ProductOptionEnti
 //	CampaignEntity findByIdAndUserIdAndStatus(Long id, Long userId, int status);
 	
 	ProductOptionEntity findByIdAndUserIdAndCampaignId(Long id, Long userId, Long campaignId);
+	
+	Page<ProductOptionEntity> findAllByUserIdAndCampaignIdAndCreatedAtBetween(Pageable pageable, Long userId, Long campaignId, Date start, Date end);
 }

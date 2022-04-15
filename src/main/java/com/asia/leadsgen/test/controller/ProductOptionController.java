@@ -1,13 +1,12 @@
 package com.asia.leadsgen.test.controller;
 
+import java.text.ParseException;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,10 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
-import com.asia.leadsgen.test.repository.ProductOptionRepository;
 import com.asia.leadsgen.test.service.ProductOptionService;
-import com.asia.leadsgen.test.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import oracle.jdbc.driver.OracleSQLException;
 
 @RestController
@@ -37,29 +38,39 @@ public class ProductOptionController {
 	@Autowired
 	ProductOptionService productOptionService;
 
-	@Autowired
-	ProductOptionRepository productOptionRepository;
-
-	@Autowired
-	UserService userService;
-
 //	Route::get('/campaigns/{campaign_id}/options', [ProductOptionController::class, 'list']);
 	@GetMapping()
+	@Operation(summary = "List Products")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<ProductOptionEntity>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
-			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException {
-//		logger.info(campaignId);
-		Page<ProductOptionEntity> productOptionEntity = productOptionRepository.findAllByUserIdAndCampaignId(
-				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userService.getUser(userInfo).getId(), campaignId);
+			@RequestParam(name = "start_date", required = false) String startDate,
+			@RequestParam(name = "end_date", required = false) String endDate,
+			@PathVariable(name = "campaign_id") Long campaignId,
+			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException, ParseException {
+		Page<ProductOptionEntity> productOptionEntity = productOptionService.list(campaignId, page, pageSize, startDate,
+				endDate, sort, dir, userInfo);
 		return new ResponseEntity<>(productOptionEntity, HttpStatus.OK);
 	}
 
 //	Route::post('/campaigns/{campaign_id}/options', [ProductOptionController::class, 'create']);
 	@PostMapping()
+	@Operation(summary = "Create Product")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement"),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ProductOptionEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -68,12 +79,19 @@ public class ProductOptionController {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 
-		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity,
-				userService.getUser(userInfo).getId(), campaignId), HttpStatus.OK);
+		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity, userInfo, campaignId),
+				HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
 	@PutMapping("/{option_id}")
+	@Operation(summary = "Update")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ProductOptionEntity> update(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -81,8 +99,8 @@ public class ProductOptionController {
 			@RequestBody ProductOptionEntity productOptionEntity) throws LoginException, OracleSQLException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
-		return new ResponseEntity<>(productOptionService.updateOption(productOptionEntity,
-				userService.getUser(userInfo).getId(), campaignId, optionId), HttpStatus.OK);
+		return new ResponseEntity<>(
+				productOptionService.updateOption(productOptionEntity, userInfo, campaignId, optionId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());
