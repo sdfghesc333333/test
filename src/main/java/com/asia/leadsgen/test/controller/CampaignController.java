@@ -1,9 +1,6 @@
 package com.asia.leadsgen.test.controller;
 
-import java.text.ParseException;
 import java.util.logging.Logger;
-
-import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
-import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.service.CampaignService;
 import com.asia.leadsgen.test.util.AppParams;
 
@@ -39,9 +35,6 @@ import oracle.jdbc.driver.OracleSQLException;
 @CrossOrigin("*")
 @RequestMapping(path = "/campaigns")
 public class CampaignController {
-
-	@Autowired
-	CampaignRepository campaignRepository;
 
 	@Autowired
 	CampaignService campaignService;
@@ -64,7 +57,7 @@ public class CampaignController {
 			@RequestParam(name = "end_date", required = false) String endDate,
 			@RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
-			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException, ParseException {
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) {
 
 		Page<CampaignEntity> campaignEntity = campaignService.list(page, pageSize, startDate, endDate, search, sort,
 				dir, userInfo);
@@ -83,7 +76,7 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody CampaignEntity campaignRequest) throws LoginException, OracleSQLException {
+			@RequestBody CampaignEntity campaignRequest) throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 
 		return new ResponseEntity<>(campaignService.create(campaignRequest, userInfo), HttpStatus.OK);
@@ -101,7 +94,7 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> getCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException {
+			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.getCampaign(campaignId, userInfo), HttpStatus.OK);
 	}
@@ -131,7 +124,7 @@ public class CampaignController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
-			throws LoginException, OracleSQLException {
+			throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest, userInfo, campaignId),
 				HttpStatus.OK);
@@ -149,7 +142,7 @@ public class CampaignController {
 	public ResponseEntity<String> deleteCampaign(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId) throws LoginException, OracleSQLException {
+			@PathVariable(name = "campaign_id") Long campaignId) throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.deleteCampaign(campaignId, userInfo), HttpStatus.OK);
 	}

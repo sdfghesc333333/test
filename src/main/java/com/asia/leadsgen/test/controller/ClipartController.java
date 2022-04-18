@@ -60,9 +60,8 @@ public class ClipartController {
 	public ResponseEntity<ClipartEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntity clipartRequest) throws LoginException, OracleSQLException {
+			@RequestBody ClipartEntity clipartRequest) throws OracleSQLException {
 
-		return new ResponseEntity<>(clipartService.create(clipartRequest, userService.getUser(userInfo).getId()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(clipartService.create(clipartRequest, userInfo), HttpStatus.OK);
 	}
 }

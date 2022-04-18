@@ -3,12 +3,15 @@ package com.asia.leadsgen.test.service;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.security.auth.login.LoginException;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.exception.NotFoundException;
+import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
 
@@ -20,9 +23,20 @@ public class MockupService {
 	@Autowired
 	MockupRepository mockupRepository;
 
-	public MockupEntity add(MockupEntity mockupEntity, long userId) throws IOException, OracleSQLException {
-		mockupEntity.setUserId(userId);
-		mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()));
+	@Autowired
+	UserService userService;
+
+	public MockupEntity add(MockupEntity mockupEntity, UserInfo userInfo) throws OracleSQLException {
+		try {
+			mockupEntity.setUserId(userService.getUser(userInfo).getId());
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+		try {
+			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		mockupEntity.setCreatedAt(new Date());
 		if (ObjectUtils.isNotEmpty(mockupRepository.save(mockupEntity))) {
 			return mockupRepository.save(mockupEntity);
@@ -31,8 +45,14 @@ public class MockupService {
 		}
 	}
 
-	public MockupEntity get(Long mockupId, Long userId) {
-		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
+	public MockupEntity get(Long mockupId, UserInfo userInfo) {
+		MockupEntity mockupEntity = null;
+		try {
+			mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId,
+					userService.getUser(userInfo).getId(), null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			return mockupEntity;
 		} else {
@@ -40,12 +60,21 @@ public class MockupService {
 		}
 	}
 
-	public MockupEntity edit(Long mockupId, Long userId, MockupEntity mockupRequest)
-			throws IOException, OracleSQLException {
+	public MockupEntity edit(Long mockupId, UserInfo userInfo, MockupEntity mockupRequest) throws OracleSQLException {
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e1) {
+			e1.printStackTrace();
+		}
 		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			mockupEntity.setUserId(userId);
-			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupRequest.getFilePath()));
+			try {
+				mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupRequest.getFilePath()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			mockupEntity.setWidth(mockupRequest.getWidth());
 			mockupEntity.setHeight(mockupRequest.getHeight());
 			mockupEntity.setConditions(mockupRequest.getConditions());
@@ -62,8 +91,14 @@ public class MockupService {
 		}
 	}
 
-	public String delete(Long mockupId, Long userId) throws OracleSQLException {
-		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
+	public String delete(Long mockupId, UserInfo userInfo) throws OracleSQLException {
+		MockupEntity mockupEntity = new MockupEntity();
+		try {
+			mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId,
+					userService.getUser(userInfo).getId(), null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			mockupEntity.setDeletedAt(new Date());
 			if (ObjectUtils.isNotEmpty(mockupRepository.save(mockupEntity))) {

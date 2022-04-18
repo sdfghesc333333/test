@@ -1,7 +1,5 @@
 package com.asia.leadsgen.test.controller;
 
-import java.io.IOException;
-
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +59,8 @@ public class FontController {
 	public ResponseEntity<FontEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody FontEntity fontEntity) throws IOException, LoginException, OracleSQLException {
+			@RequestBody FontEntity fontEntity) throws OracleSQLException {
 
-		return new ResponseEntity<>(fontService.create(fontEntity, userService.getUser(userInfo).getId()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(fontService.create(fontEntity, userInfo), HttpStatus.OK);
 	}
 }

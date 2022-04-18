@@ -1,7 +1,5 @@
 package com.asia.leadsgen.test.controller;
 
-import java.io.IOException;
-
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,10 +62,9 @@ public class MockupController {
 	public ResponseEntity<MockupEntity> add(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody MockupEntity mockupEntity) throws IOException, LoginException, OracleSQLException {
+			@RequestBody MockupEntity mockupEntity) throws OracleSQLException {
 
-		return new ResponseEntity<>(mockupService.add(mockupEntity, userService.getUser(userInfo).getId()),
-				HttpStatus.OK);
+		return new ResponseEntity<>(mockupService.add(mockupEntity, userInfo), HttpStatus.OK);
 	}
 
 //	Route::get('/mockups/{mockup_id}', [MockupController::class, 'get']);
@@ -75,8 +72,8 @@ public class MockupController {
 	public ResponseEntity<MockupEntity> get(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId) throws LoginException {
-		return new ResponseEntity<>(mockupService.get(mockupId, userService.getUser(userInfo).getId()), HttpStatus.OK);
+			@PathVariable(name = "mockup_id") Long mockupId) {
+		return new ResponseEntity<>(mockupService.get(mockupId, userInfo), HttpStatus.OK);
 	}
 
 //	Route::put('/mockups/{mockup_id}', [MockupController::class, 'edit']);
@@ -85,17 +82,15 @@ public class MockupController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupEntity mockupRequest)
-			throws LoginException, OracleSQLException, IOException {
-		return new ResponseEntity<>(mockupService.edit(mockupId, userService.getUser(userInfo).getId(), mockupRequest),
-				HttpStatus.OK);
+			throws OracleSQLException {
+		return new ResponseEntity<>(mockupService.edit(mockupId, userInfo, mockupRequest), HttpStatus.OK);
 	}
 
 //	Route::delete('/mockups/{mockup_id}', [MockupController::class, 'delete']);
 	@DeleteMapping("/{mockup_id}")
 	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId) throws LoginException, OracleSQLException, IOException {
-		return new ResponseEntity<>(mockupService.delete(mockupId, userService.getUser(userInfo).getId()),
-				HttpStatus.OK);
+			@PathVariable(name = "mockup_id") Long mockupId) throws OracleSQLException {
+		return new ResponseEntity<>(mockupService.delete(mockupId, userInfo), HttpStatus.OK);
 	}
 }

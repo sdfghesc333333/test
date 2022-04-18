@@ -1,9 +1,6 @@
 package com.asia.leadsgen.test.controller;
 
-import java.text.ParseException;
 import java.util.logging.Logger;
-
-import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,7 +54,7 @@ public class ProductOptionController {
 			@RequestParam(name = "end_date", required = false) String endDate,
 			@PathVariable(name = "campaign_id") Long campaignId,
 			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
-			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException, ParseException {
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) {
 		Page<ProductOptionEntity> productOptionEntity = productOptionService.list(campaignId, page, pageSize, startDate,
 				endDate, sort, dir, userInfo);
 		return new ResponseEntity<>(productOptionEntity, HttpStatus.OK);
@@ -76,7 +73,7 @@ public class ProductOptionController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity)
-			throws LoginException, OracleSQLException {
+			throws OracleSQLException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 
@@ -97,7 +94,7 @@ public class ProductOptionController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
-			@RequestBody ProductOptionEntity productOptionEntity) throws LoginException, OracleSQLException {
+			@RequestBody ProductOptionEntity productOptionEntity) throws OracleSQLException {
 		logger.info("======================== " + productOptionEntity);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
@@ -117,7 +114,7 @@ public class ProductOptionController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody SortOptionRequestModel optionIds)
-			throws LoginException, OracleSQLException {
+			throws OracleSQLException {
 		logger.info("======================== " + optionIds);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(productOptionService.sortOptions(optionIds, userInfo, campaignId), HttpStatus.OK);

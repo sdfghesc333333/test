@@ -1,8 +1,5 @@
 package com.asia.leadsgen.test.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -21,6 +18,7 @@ import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
+import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -33,9 +31,12 @@ public class CampaignService {
 	@Autowired
 	UserService userService;
 
-	public CampaignEntity create(CampaignEntity campaignEntity, UserInfo userInfo)
-			throws OracleSQLException, LoginException {
-		campaignEntity.setUserId(userService.getUser(userInfo).getId());
+	public CampaignEntity create(CampaignEntity campaignEntity, UserInfo userInfo) throws OracleSQLException {
+		try {
+			campaignEntity.setUserId(userService.getUser(userInfo).getId());
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		campaignEntity.setStatus(1);
 		campaignEntity.setCreatedAt(new Date());
 		campaignEntity.setExportFileType("png");
@@ -48,9 +49,14 @@ public class CampaignService {
 	}
 
 	public CampaignEntity updateCampaign(CampaignEntity campaignRequest, UserInfo userInfo, Long campaignId)
-			throws OracleSQLException, LoginException {
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null);
+			throws OracleSQLException {
+		CampaignEntity campaignEntity = new CampaignEntity();
+		try {
+			campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
+					userService.getUser(userInfo).getId(), 1, null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			campaignEntity.setProductId(campaignRequest.getProductId());
 			campaignEntity.setHandle(campaignRequest.getHandle());
@@ -67,9 +73,14 @@ public class CampaignService {
 		}
 	}
 
-	public String deleteCampaign(long campaignId, UserInfo userInfo) throws OracleSQLException, LoginException {
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null);
+	public String deleteCampaign(long campaignId, UserInfo userInfo) throws OracleSQLException {
+		CampaignEntity campaignEntity = new CampaignEntity();
+		try {
+			campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
+					userService.getUser(userInfo).getId(), 1, null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			campaignEntity.setStatus(0);
 			campaignEntity.setDeletedAt(new Date());
@@ -84,9 +95,14 @@ public class CampaignService {
 		}
 	}
 
-	public CampaignEntity getCampaign(Long campaignId, UserInfo userInfo) throws LoginException {
-		CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null);
+	public CampaignEntity getCampaign(Long campaignId, UserInfo userInfo) {
+		CampaignEntity campaignEntity = new CampaignEntity();
+		try {
+			campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
+					userService.getUser(userInfo).getId(), 1, null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isNotEmpty(campaignEntity)) {
 			return campaignEntity;
 		} else {
@@ -94,23 +110,16 @@ public class CampaignService {
 		}
 	}
 
-	public Page<CampaignEntity> list(int page, int pageSize, String startDateStr, String endDateStr, String search,
-			String sort, String dir, UserInfo userInfo) throws LoginException, ParseException {
+	public Page<CampaignEntity> list(int page, int pageSize, String startDate, String endDate, String search,
+			String sort, String dir, UserInfo userInfo) {
 		Page<CampaignEntity> campaignEntity;
 		Pageable pageable;
 
-		Date startDate;
-		Date endDate;
-		if (StringUtils.isEmpty(startDateStr)) {
-			startDate = formatDate("1609174800000");
-		} else {
-			startDate = formatDate(startDateStr);
-		}
-
-		if (StringUtils.isEmpty(endDateStr)) {
-			endDate = new Date();
-		} else {
-			endDate = formatDate(endDateStr);
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
 		}
 
 		if (dir.equals("asc")) {
@@ -120,23 +129,15 @@ public class CampaignService {
 		}
 
 		if (StringUtils.isEmpty(search)) {
-			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(pageable,
-					userService.getUser(userInfo).getId(), null, startDate, endDate);
+			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(pageable, userId, null,
+					DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
 		} else {
 			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(pageable,
-					userService.getUser(userInfo).getId(), null, "%"+search+"%", startDate, endDate);
+					userId, null, "%" + search + "%", DateTimeUtil.startDateFomat(startDate),
+					DateTimeUtil.endDateFomat(endDate));
 		}
 
 		return campaignEntity;
-	}
-
-	public Date formatDate(String dateString) throws ParseException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd\\'T\\'hh:mm:ss\\'Z\\'");
-		Calendar affCal = Calendar.getInstance();
-		affCal.setTimeInMillis(Long.valueOf(dateString));
-		dateString = dateFormat.format(affCal.getTime());
-		Date date = dateFormat.parse(dateString);
-		return date;
 	}
 
 	private Logger logger = Logger.getLogger(CampaignService.class.getName());

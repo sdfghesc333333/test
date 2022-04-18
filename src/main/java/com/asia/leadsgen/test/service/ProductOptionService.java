@@ -1,15 +1,11 @@
 package com.asia.leadsgen.test.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +19,7 @@ import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
+import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -39,13 +36,20 @@ public class ProductOptionService {
 	UserService userService;
 
 	public ProductOptionEntity createProductOption(ProductOptionEntity productOptionEntity, UserInfo userInfo,
-			long campaignId) throws OracleSQLException, LoginException {
+			long campaignId) throws OracleSQLException {
 
-		if (ObjectUtils.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null))) {
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (ObjectUtils
+				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
-			productOptionEntity.setUserId(userService.getUser(userInfo).getId());
+			productOptionEntity.setUserId(userId);
 			productOptionEntity.setCampaignId(campaignId);
 			productOptionEntity.setCreatedAt(new Date());
 			if (ObjectUtils.isNotEmpty(productOptionRepository.save(productOptionEntity))) {
@@ -57,18 +61,25 @@ public class ProductOptionService {
 	}
 
 	public ProductOptionEntity updateOption(ProductOptionEntity productOptionEntity, UserInfo userInfo, long campaignId,
-			long optionId) throws OracleSQLException, LoginException {
+			long optionId) throws OracleSQLException {
 
-		if (ObjectUtils.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null))) {
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (ObjectUtils
+				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
-			if (ObjectUtils.isEmpty(productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId,
-					userService.getUser(userInfo).getId(), campaignId, null))) {
+			if (ObjectUtils.isEmpty(productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId, userId,
+					campaignId, null))) {
 				throw new NotFoundException("Option not exist");
 			} else {
-				ProductOptionEntity optionEntity = productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(
-						optionId, userService.getUser(userInfo).getId(), campaignId, null);
+				ProductOptionEntity optionEntity = productOptionRepository
+						.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId, userId, campaignId, null);
 				optionEntity.setType(productOptionEntity.getType());
 				optionEntity.setTitle(productOptionEntity.getTitle());
 				optionEntity.setUpdatedAt(new Date());
@@ -100,7 +111,6 @@ public class ProductOptionService {
 					productOptionRepository.save(productOptionEntity);
 				}
 			} catch (LoginException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			index++;
@@ -108,9 +118,14 @@ public class ProductOptionService {
 		return "msg : Success";
 	}
 
-	public String deleteOption(Long optionId, UserInfo userInfo, Long campaignId) throws LoginException {
-		ProductOptionEntity productOptionEntity = productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(
-				optionId, userService.getUser(userInfo).getId(), campaignId, null);
+	public String deleteOption(Long optionId, UserInfo userInfo, Long campaignId) {
+		ProductOptionEntity productOptionEntity = null;
+		try {
+			productOptionEntity = productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId,
+					userService.getUser(userInfo).getId(), campaignId, null);
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
 		if (ObjectUtils.isEmpty(productOptionEntity)) {
 			return "errors : Option not exist !";
 		} else {
@@ -120,23 +135,15 @@ public class ProductOptionService {
 		}
 	}
 
-	public Page<ProductOptionEntity> list(Long campaignId, int page, int pageSize, String startDateStr,
-			String endDateStr, String sort, String dir, UserInfo userInfo) throws ParseException, LoginException {
-		Page<ProductOptionEntity> productOptionEntities;
+	public Page<ProductOptionEntity> list(Long campaignId, int page, int pageSize, String startDate, String endDate,
+			String sort, String dir, UserInfo userInfo) {
 		Pageable pageable;
 
-		Date startDate;
-		Date endDate;
-		if (StringUtils.isEmpty(startDateStr)) {
-			startDate = formatDate("1609174800000");
-		} else {
-			startDate = formatDate(startDateStr);
-		}
-
-		if (StringUtils.isEmpty(endDateStr)) {
-			endDate = new Date();
-		} else {
-			endDate = formatDate(endDateStr);
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
 		}
 
 		if (dir.equals("asc")) {
@@ -145,24 +152,16 @@ public class ProductOptionService {
 			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
 		}
 
-		if (ObjectUtils.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
-				userService.getUser(userInfo).getId(), 1, null))) {
+		if (ObjectUtils
+				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
-			productOptionEntities = productOptionRepository.findAllByUserIdAndCampaignIdAndCreatedAtBetween(pageable,
-					userService.getUser(userInfo).getId(), campaignId, startDate, endDate);
+			Page<ProductOptionEntity> productOptionEntities = productOptionRepository
+					.findAllByUserIdAndCampaignIdAndCreatedAtBetween(pageable, userId, campaignId,
+							DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
 
 			return productOptionEntities;
 		}
-	}
-
-	public Date formatDate(String dateString) throws ParseException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd\\'T\\'hh:mm:ss\\'Z\\'");
-		Calendar affCal = Calendar.getInstance();
-		affCal.setTimeInMillis(Long.valueOf(dateString));
-		dateString = dateFormat.format(affCal.getTime());
-		Date date = dateFormat.parse(dateString);
-		return date;
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionService.class.getName());
