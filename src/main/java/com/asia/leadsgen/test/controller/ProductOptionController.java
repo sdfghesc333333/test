@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.asia.leadsgen.test.model.SortOptionRequestModel;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.service.ProductOptionService;
@@ -101,6 +102,25 @@ public class ProductOptionController {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
 				productOptionService.updateOption(productOptionEntity, userInfo, campaignId, optionId), HttpStatus.OK);
+	}
+
+//	Route::post('/campaigns/{campaign_id}/options/sort', [ProductOptionController::class, 'sortOptions']);
+	@PostMapping("/sort")
+	@Operation(summary = "Sort Options")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<String> sortOptions(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody SortOptionRequestModel optionIds)
+			throws LoginException, OracleSQLException {
+		logger.info("======================== " + optionIds);
+		logger.info("user_info " + userInfo);
+		return new ResponseEntity<>(productOptionService.sortOptions(optionIds, userInfo, campaignId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());

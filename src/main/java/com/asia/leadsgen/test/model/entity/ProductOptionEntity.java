@@ -66,7 +66,7 @@ public class ProductOptionEntity {
 	private String conditionType;
 
 	@Column(name = "position")
-	private String position;
+	private int position;
 
 	@Column(name = "deleted_at")
 	@JsonProperty(value = "deleted_at")

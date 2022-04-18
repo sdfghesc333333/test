@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.exception.NotFoundException;
+import com.asia.leadsgen.test.model.SortOptionRequestModel;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
@@ -62,12 +63,12 @@ public class ProductOptionService {
 				userService.getUser(userInfo).getId(), 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
-			if (ObjectUtils.isEmpty(productOptionRepository.findByIdAndUserIdAndCampaignId(optionId,
-					userService.getUser(userInfo).getId(), campaignId))) {
+			if (ObjectUtils.isEmpty(productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId,
+					userService.getUser(userInfo).getId(), campaignId, null))) {
 				throw new NotFoundException("Option not exist");
 			} else {
-				ProductOptionEntity optionEntity = productOptionRepository.findByIdAndUserIdAndCampaignId(optionId,
-						userService.getUser(userInfo).getId(), campaignId);
+				ProductOptionEntity optionEntity = productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(
+						optionId, userService.getUser(userInfo).getId(), campaignId, null);
 				optionEntity.setType(productOptionEntity.getType());
 				optionEntity.setTitle(productOptionEntity.getTitle());
 				optionEntity.setUpdatedAt(new Date());
@@ -80,6 +81,42 @@ public class ProductOptionService {
 					throw new OracleSQLException();
 				}
 			}
+		}
+	}
+
+	public String sortOptions(SortOptionRequestModel optionIds, UserInfo userInfo, Long campaignId) {
+		if (optionIds.getOptionIds().isEmpty()) {
+			return "errors : Empty ids";
+		}
+
+		int index = 0;
+		for (Long id : optionIds.getOptionIds()) {
+			try {
+				ProductOptionEntity productOptionEntity = productOptionRepository
+						.findByIdAndUserIdAndCampaignIdAndDeletedAt(id, userService.getUser(userInfo).getId(),
+								campaignId, null);
+				if (ObjectUtils.isNotEmpty(productOptionEntity)) {
+					productOptionEntity.setPosition(index);
+					productOptionRepository.save(productOptionEntity);
+				}
+			} catch (LoginException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			index++;
+		}
+		return "msg : Success";
+	}
+
+	public String deleteOption(Long optionId, UserInfo userInfo, Long campaignId) throws LoginException {
+		ProductOptionEntity productOptionEntity = productOptionRepository.findByIdAndUserIdAndCampaignIdAndDeletedAt(
+				optionId, userService.getUser(userInfo).getId(), campaignId, null);
+		if (ObjectUtils.isEmpty(productOptionEntity)) {
+			return "errors : Option not exist !";
+		} else {
+			productOptionEntity.setDeletedAt(new Date());
+			productOptionRepository.save(productOptionEntity);
+			return "msg : Success";
 		}
 	}
 

@@ -12,10 +12,12 @@ import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 @Repository
 public interface ProductOptionRepository extends JpaRepository<ProductOptionEntity, Long> {
 	Page<ProductOptionEntity> findAllByUserIdAndCampaignId(Pageable pageable, Long userId, Long campaignId);
-	
+
 //	CampaignEntity findByIdAndUserIdAndStatus(Long id, Long userId, int status);
-	
-	ProductOptionEntity findByIdAndUserIdAndCampaignId(Long id, Long userId, Long campaignId);
-	
-	Page<ProductOptionEntity> findAllByUserIdAndCampaignIdAndCreatedAtBetween(Pageable pageable, Long userId, Long campaignId, Date start, Date end);
+
+	ProductOptionEntity findByIdAndUserIdAndCampaignIdAndDeletedAt(Long id, Long userId, Long campaignId,
+			Date deletedAt);
+
+	Page<ProductOptionEntity> findAllByUserIdAndCampaignIdAndCreatedAtBetween(Pageable pageable, Long userId,
+			Long campaignId, Date start, Date end);
 }
