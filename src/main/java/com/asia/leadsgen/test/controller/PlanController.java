@@ -21,7 +21,7 @@ import com.asia.leadsgen.test.repository.impl.ServicePackRepositoryImpl;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping(path = "plans")
+@RequestMapping(path = "packService")
 public class PlanController {
 
 	@Autowired

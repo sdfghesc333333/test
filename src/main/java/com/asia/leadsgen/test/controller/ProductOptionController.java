@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -118,6 +119,24 @@ public class ProductOptionController {
 		logger.info("======================== " + optionIds);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(productOptionService.sortOptions(optionIds, userInfo, campaignId), HttpStatus.OK);
+	}
+
+//	Route::delete('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'delete']);
+	@DeleteMapping("/{option_id}")
+	@Operation(summary = "Update")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
+			@RequestBody ProductOptionEntity productOptionEntity) throws OracleSQLException {
+		logger.info("======================== " + productOptionEntity);
+		logger.info("user_info " + userInfo);
+		return new ResponseEntity<>(productOptionService.deleteOption(optionId, userInfo, campaignId), HttpStatus.OK);
 	}
 
 	private Logger logger = Logger.getLogger(ProductOptionController.class.getName());

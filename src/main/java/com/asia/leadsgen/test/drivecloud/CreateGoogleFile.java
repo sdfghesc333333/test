@@ -81,21 +81,38 @@ public class CreateGoogleFile {
 
 		return googleFile.getWebViewLink();
 	}
-	
+
 	public static String uploadMockupGoogleDrive(String filePath) throws IOException {
 
-			java.io.File uploadFile = new java.io.File(filePath);
+		java.io.File uploadFile = new java.io.File(filePath);
 
-			String strPath = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+		String strPath = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
 
-			// Create Google File:
+		// Create Google File:
 
-			File googleFile = createGoogleFile("16FmGDEvFK9DensCf6CYpLt09X1SFo87D", "image/jpeg", strPath, uploadFile);
-			System.out.println("Created Google file!");
-			System.out.println("WebContentLink: " + googleFile.getWebContentLink());
-			System.out.println("getWebViewLink: " + googleFile.getWebViewLink());
+		File googleFile = createGoogleFile("1S0rPvq0QNA34gG055PiqK69WeP5-Q75S", "image/jpeg", strPath, uploadFile);
+		System.out.println("Created Google file!");
+		System.out.println("WebContentLink: " + googleFile.getWebContentLink());
+		System.out.println("getWebViewLink: " + googleFile.getWebViewLink());
 
-			return googleFile.getWebViewLink();
-		}
+		return googleFile.getWebViewLink();
+	}
+
+	public static String uploadFileImage(String filePath) throws IOException {
+
+		java.io.File uploadFile = new java.io.File(filePath);
+
+		String strPath = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+		String type = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+		// Create Google File:
+
+		File googleFile = createGoogleFile("1S0rPvq0QNA34gG055PiqK69WeP5-Q75S", "image/" + type, strPath, uploadFile);
+		System.out.println("Created Google file!");
+		System.out.println("WebContentLink: " + googleFile.getWebContentLink());
+		System.out.println("getWebViewLink: " + googleFile.getWebViewLink());
+
+		return googleFile.getWebViewLink();
+	}
 
 }

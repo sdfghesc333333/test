@@ -21,6 +21,7 @@ import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
+import oracle.net.aso.u;
 
 @Service
 public class CampaignService {
@@ -70,6 +71,46 @@ public class CampaignService {
 			}
 		} else {
 			throw new NotFoundException("Campaign not exist");
+		}
+	}
+
+	public CampaignEntity createOrUpdate(CampaignEntity campaignRequest, UserInfo userInfo, Long campaignId)
+			throws OracleSQLException {
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (campaignId == null) {
+			campaignRequest.setUserId(userId);
+			campaignRequest.setStatus(1);
+			campaignRequest.setCreatedAt(new Date());
+			campaignRequest.setExportFileType("png");
+			logger.info("save : " + campaignRepository.save(campaignRequest));
+			if (ObjectUtils.isNotEmpty(campaignRepository.save(campaignRequest))) {
+				return campaignRepository.save(campaignRequest);
+			} else {
+				throw new OracleSQLException();
+			}
+		} else {
+			CampaignEntity campaignEntity = campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId,
+					userId, 1, null);
+			if (ObjectUtils.isNotEmpty(campaignEntity)) {
+				campaignEntity.setProductId(campaignRequest.getProductId());
+				campaignEntity.setHandle(campaignRequest.getHandle());
+				campaignEntity.setName(campaignRequest.getName());
+				campaignEntity.setUpdatedAt(new Date());
+				campaignEntity.setExportFileType("png");
+				if (ObjectUtils.isNotEmpty(campaignRepository.save(campaignEntity))) {
+					return campaignRepository.save(campaignEntity);
+				} else {
+					throw new OracleSQLException();
+				}
+			} else {
+				throw new NotFoundException("Campaign not exist");
+			}
 		}
 	}
 

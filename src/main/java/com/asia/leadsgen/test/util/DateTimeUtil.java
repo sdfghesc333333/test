@@ -117,8 +117,8 @@ public class DateTimeUtil {
 		Date date = null;
 		try {
 			date = dateFormat.parse(dateString);
+//			System.out.println(longToDate(1542438800000L, "yyyy-MM-dd\\'T\\'hh:mm:ss\\'Z\\'"));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return date;
@@ -126,16 +126,20 @@ public class DateTimeUtil {
 
 	public static Date startDateFomat(String startDate) {
 		if (StringUtils.isEmpty(startDate)) {
-			return formatDate("1609174800000");
+			System.out.println("start date " + formatDate("1542438800000"));
+			return formatDate("1542438800000");
 		} else {
+			System.out.println("start date " + formatDate(startDate));
 			return formatDate(startDate);
 		}
 	}
 
 	public static Date endDateFomat(String endDate) {
 		if (StringUtils.isEmpty(endDate)) {
+			System.out.println("end date " + new Date());
 			return new Date();
 		} else {
+			System.out.println("end date " + formatDate(endDate));
 			return formatDate(endDate);
 		}
 	}

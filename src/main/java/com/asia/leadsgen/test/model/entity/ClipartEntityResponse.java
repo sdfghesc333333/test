@@ -12,13 +12,14 @@ import javax.persistence.Table;
 import org.json.JSONArray;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "clipart_templates")
-public class ClipartEntity {
+public class ClipartEntityResponse {
 
 	@Id
 	@Column(name = "id")
@@ -38,8 +39,9 @@ public class ClipartEntity {
 	@Column(name = "type")
 	private String type;
 
-	@Column(name = "clipart_categories")
+	@Column(name = "clipart_categories", columnDefinition = "json")
 	@JsonProperty(value = "clipart_categories")
+	@JsonRawValue
 	private String clipartCategories;
 
 	@Column(name = "deleted_at")
