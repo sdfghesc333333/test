@@ -26,7 +26,13 @@ import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.service.MockupService;
 import com.asia.leadsgen.test.service.UserService;
+import com.asia.leadsgen.test.util.AppParams;
 
+import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import oracle.jdbc.driver.OracleSQLException;
 
 @RestController
@@ -93,4 +99,30 @@ public class MockupController {
 			@PathVariable(name = "mockup_id") Long mockupId) throws OracleSQLException {
 		return new ResponseEntity<>(mockupService.delete(mockupId, userInfo), HttpStatus.OK);
 	}
+
+//	Route::get('/mockupsForListPage', [MockupController::class, 'getListForMockupPage']);
+	@GetMapping("/mockupsForListPage")
+	@Operation(summary = "List campaigns")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<Page<MockupEntity>> getListForMockupPage(
+			@RequestHeader(name = "x-authorization", required = true) @ApiParam(value = "Access Token", example = AppParams.TOKEN) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
+			@RequestParam(name = "start_date", required = false) String startDate,
+			@RequestParam(name = "end_date", required = false) String endDate,
+			@RequestParam(name = "search", required = false) String search,
+			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) {
+
+		Page<MockupEntity> mockupEntity = mockupService.getListForMockupPage(page, pageSize, startDate, endDate, search,
+				sort, dir, userInfo);
+		return new ResponseEntity<>(mockupEntity, HttpStatus.OK);
+	}
+
 }

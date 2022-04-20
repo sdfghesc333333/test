@@ -6,14 +6,21 @@ import java.util.Date;
 import javax.security.auth.login.LoginException;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
+import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
+import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -111,4 +118,33 @@ public class MockupService {
 			throw new NotFoundException("Mockup not exist");
 		}
 	}
+
+	public Page<MockupEntity> getListForMockupPage(int page, int pageSize, String startDate, String endDate,
+			String search, String sort, String dir, UserInfo userInfo) {
+
+		Page<MockupEntity> mockupEntity;
+		Pageable pageable;
+
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (dir.equals("asc")) {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
+		} else {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
+		}
+
+		if (StringUtils.isEmpty(search)) {
+			mockupEntity = mockupRepository.findAllByUserIdAndDeletedAt(pageable, userId, null);
+		} else {
+			mockupEntity = mockupRepository.findAllByUserIdAndDeletedAtAndNameLike(pageable, userId, null, search);
+		}
+
+		return mockupEntity;
+	}
+
 }

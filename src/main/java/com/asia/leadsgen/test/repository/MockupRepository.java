@@ -13,5 +13,7 @@ import com.asia.leadsgen.test.model.entity.MockupEntity;
 public interface MockupRepository extends JpaRepository<MockupEntity, Long> {
 	Page<MockupEntity> findAllByUserIdAndDeletedAt(Pageable pageable, Long userId, Date deletedAt);
 	
+	Page<MockupEntity> findAllByUserIdAndDeletedAtAndNameLike(Pageable pageable, Long userId, Date deletedAt, String name);
+	
 	MockupEntity findByIdAndUserIdAndDeletedAt(Long id, Long userId, Date deletedAt);
 }

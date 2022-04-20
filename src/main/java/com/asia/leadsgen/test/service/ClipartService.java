@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
+import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
 import com.asia.leadsgen.test.repository.ClipartRepository;
@@ -45,9 +46,9 @@ public class ClipartService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("===================================================");
-		
+
 //		clipartEntity.setClipartCategories(clipartEntity.getClipartCategories().toString());
 //		System.out.print(clipartEntity.getClipartCategories().toString());
 
@@ -63,22 +64,26 @@ public class ClipartService {
 			}
 		} else {
 			ClipartEntityResponse entity = clipartRepository.getById(userId, catId);
-			entity.setClipartCategories(clipartEntity.getClipartCategories());
-			entity.setName(clipartEntity.getName());
-			entity.setThumbnail(clipartEntity.getThumbnail());
-			entity.setType(clipartEntity.getType());
-			entity.setUpdatedAt(new Date());
-			if (ObjectUtils.isNotEmpty(clipartRepository.save(clipartEntity))) {
-				return clipartRepository.save(entity);
+			if (ObjectUtils.isNotEmpty(catId)) {
+				entity.setClipartCategories(clipartEntity.getClipartCategories());
+				entity.setName(clipartEntity.getName());
+				entity.setThumbnail(clipartEntity.getThumbnail());
+				entity.setType(clipartEntity.getType());
+				entity.setUpdatedAt(new Date());
+				if (ObjectUtils.isNotEmpty(clipartRepository.save(clipartEntity))) {
+					return clipartRepository.save(entity);
+				} else {
+					throw new OracleSQLException();
+				}
 			} else {
-				throw new OracleSQLException();
+				throw new NotFoundException("Cat not exist");
 			}
 		}
 
 	}
 
-	public List<ClipartEntityResponse> list(int page, int pageSize, String startDate, String endDate, String sort, String dir,
-			UserInfo userInfo) {
+	public List<ClipartEntityResponse> list(int page, int pageSize, String startDate, String endDate, String sort,
+			String dir, UserInfo userInfo) {
 		List<ClipartEntityResponse> clipartEntity;
 		Pageable pageable;
 
@@ -99,6 +104,30 @@ public class ClipartService {
 				DateTimeUtil.endDateFomat(endDate));
 
 		return clipartEntity;
+	}
+
+	public String delete(UserInfo userInfo, Long catId) throws OracleSQLException {
+
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		ClipartEntityResponse entity = clipartRepository.getById(userId, catId);
+
+		if (ObjectUtils.isNotEmpty(entity)) {
+			entity.setDeletedAt(new Date());
+			if (ObjectUtils.isNotEmpty(clipartRepository.save(entity))) {
+				clipartRepository.save(entity);
+				return "msg : Success";
+			} else {
+				throw new OracleSQLException();
+			}
+		} else {
+			return "errors : Cat not exist";
+		}
 	}
 
 }

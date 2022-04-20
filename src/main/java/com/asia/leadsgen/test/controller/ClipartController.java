@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -48,8 +51,8 @@ public class ClipartController {
 			@RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
-		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort, dir,
-				userInfo);
+		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort,
+				dir, userInfo);
 		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
 	}
 
@@ -64,8 +67,8 @@ public class ClipartController {
 			@RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
-		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort, dir,
-				userInfo);
+		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort,
+				dir, userInfo);
 		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
 	}
 
@@ -77,5 +80,26 @@ public class ClipartController {
 			@RequestBody ClipartEntityResponse clipartRequest) throws OracleSQLException {
 
 		return new ResponseEntity<>(clipartService.createOrUpdate(clipartRequest, userInfo, null), HttpStatus.OK);
+	}
+
+//	Route::put('/clipart/{cat_id}', [ClipartController::class, 'create']);
+	@PutMapping("/{cat_id}")
+	public ResponseEntity<ClipartEntityResponse> update(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
+			throws OracleSQLException {
+
+		return new ResponseEntity<>(clipartService.createOrUpdate(clipartRequest, userInfo, catId), HttpStatus.OK);
+	}
+
+//	Route::delete('/clipart/{cat_id}', [ClipartController::class, 'delete']);
+	@DeleteMapping("/{cat_id}")
+	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
+			throws OracleSQLException {
+
+		return new ResponseEntity<>(clipartService.delete(userInfo, catId), HttpStatus.OK);
 	}
 }
