@@ -21,7 +21,6 @@ import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
-import oracle.net.aso.u;
 
 @Service
 public class CampaignService {
@@ -31,6 +30,36 @@ public class CampaignService {
 
 	@Autowired
 	UserService userService;
+
+	public Page<CampaignEntity> list(int page, int pageSize, String startDate, String endDate, String search,
+			String sort, String dir, UserInfo userInfo) {
+		Page<CampaignEntity> campaignEntity;
+		Pageable pageable;
+
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (dir.equals("asc")) {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
+		} else {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
+		}
+
+		if (StringUtils.isEmpty(search)) {
+			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(pageable, userId, null,
+					DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
+		} else {
+			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(pageable,
+					userId, null, "%" + search + "%", DateTimeUtil.startDateFomat(startDate),
+					DateTimeUtil.endDateFomat(endDate));
+		}
+
+		return campaignEntity;
+	}
 
 	public CampaignEntity create(CampaignEntity campaignEntity, UserInfo userInfo) throws OracleSQLException {
 		try {
@@ -149,36 +178,6 @@ public class CampaignService {
 		} else {
 			throw new NotFoundException("Campaign not exist");
 		}
-	}
-
-	public Page<CampaignEntity> list(int page, int pageSize, String startDate, String endDate, String search,
-			String sort, String dir, UserInfo userInfo) {
-		Page<CampaignEntity> campaignEntity;
-		Pageable pageable;
-
-		Long userId = null;
-		try {
-			userId = userService.getUser(userInfo).getId();
-		} catch (LoginException e) {
-			e.printStackTrace();
-		}
-
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
-		}
-
-		if (StringUtils.isEmpty(search)) {
-			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(pageable, userId, null,
-					DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
-		} else {
-			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(pageable,
-					userId, null, "%" + search + "%", DateTimeUtil.startDateFomat(startDate),
-					DateTimeUtil.endDateFomat(endDate));
-		}
-
-		return campaignEntity;
 	}
 
 	private Logger logger = Logger.getLogger(CampaignService.class.getName());
