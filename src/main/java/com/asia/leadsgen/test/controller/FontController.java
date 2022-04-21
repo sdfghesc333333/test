@@ -31,8 +31,6 @@ import oracle.jdbc.driver.OracleSQLException;
 @CrossOrigin("*")
 @RequestMapping(path = "/fonts")
 public class FontController {
-	@Autowired
-	FontRepository fontRepository;
 
 	@Autowired
 	FontService fontService;
@@ -46,11 +44,14 @@ public class FontController {
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
+			@RequestParam(name = "start_date", required = false) String startDate,
+			@RequestParam(name = "end_date", required = false) String endDate,
+			@RequestParam(name = "search", required = false) String search,
+			@RequestParam(name = "sort", defaultValue = "name") String sort,
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
 
-		Page<FontEntity> fontEntity = fontRepository.findAllByUserIdAndDeletedAt(
-				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userService.getUser(userInfo).getId(), null);
+		Page<FontEntity> fontEntity = fontService.list(page, pageSize, startDate, endDate, search, sort, dir, userInfo);
 		return new ResponseEntity<>(fontEntity, HttpStatus.OK);
 	}
 
