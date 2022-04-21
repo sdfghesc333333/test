@@ -4,8 +4,6 @@ import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,58 +47,32 @@ public class MockupController {
 
 //	Route::get('/mockups', [MockupController::class, 'list']);
 	@GetMapping()
+	@Operation(summary = "List mockup")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<MockupEntity>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
+			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
+			@RequestParam(name = "start_date", required = false) String startDate,
+			@RequestParam(name = "end_date", required = false) String endDate,
+			@RequestParam(name = "search", required = false) String search,
+			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
+			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
 
-		Page<MockupEntity> mockupEntity = mockupRepository.findAllByUserIdAndDeletedAt(
-				PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending()),
-				userService.getUser(userInfo).getId(), null);
+		Page<MockupEntity> mockupEntity = mockupService.list(page, pageSize, startDate, endDate, search, sort, dir,
+				userInfo);
 		return new ResponseEntity<>(mockupEntity, HttpStatus.OK);
-	}
-
-//	Route::post('/mockups', [MockupController::class, 'add']);
-	@PostMapping()
-	public ResponseEntity<MockupEntity> add(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody MockupEntity mockupEntity) throws OracleSQLException {
-
-		return new ResponseEntity<>(mockupService.add(mockupEntity, userInfo), HttpStatus.OK);
-	}
-
-//	Route::get('/mockups/{mockup_id}', [MockupController::class, 'get']);
-	@GetMapping("/{mockup_id}")
-	public ResponseEntity<MockupEntity> get(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId) {
-		return new ResponseEntity<>(mockupService.get(mockupId, userInfo), HttpStatus.OK);
-	}
-
-//	Route::put('/mockups/{mockup_id}', [MockupController::class, 'edit']);
-	@PutMapping("/{mockup_id}")
-	public ResponseEntity<MockupEntity> edit(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupEntity mockupRequest)
-			throws OracleSQLException {
-		return new ResponseEntity<>(mockupService.edit(mockupId, userInfo, mockupRequest), HttpStatus.OK);
-	}
-
-//	Route::delete('/mockups/{mockup_id}', [MockupController::class, 'delete']);
-	@DeleteMapping("/{mockup_id}")
-	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId) throws OracleSQLException {
-		return new ResponseEntity<>(mockupService.delete(mockupId, userInfo), HttpStatus.OK);
 	}
 
 //	Route::get('/mockupsForListPage', [MockupController::class, 'getListForMockupPage']);
 	@GetMapping("/mockupsForListPage")
-	@Operation(summary = "List campaigns")
+	@Operation(summary = "getListForMockupPage")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
@@ -108,7 +80,10 @@ public class MockupController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<MockupEntity>> getListForMockupPage(
-			@RequestHeader(name = "x-authorization", required = true) /*@ApiParam(value = "Access Token", example = AppParams.TOKEN)*/ String accessToken,
+			@RequestHeader(name = "x-authorization", required = true) /*
+																		 * @ApiParam(value = "Access Token", example =
+																		 * AppParams.TOKEN)
+																		 */ String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
@@ -121,6 +96,71 @@ public class MockupController {
 		Page<MockupEntity> mockupEntity = mockupService.getListForMockupPage(page, pageSize, startDate, endDate, search,
 				sort, dir, userInfo);
 		return new ResponseEntity<>(mockupEntity, HttpStatus.OK);
+	}
+
+//	Route::post('/mockups', [MockupController::class, 'add']);
+	@PostMapping()
+	@Operation(summary = "Add mockup")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement"),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<MockupEntity> add(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@RequestBody MockupEntity mockupEntity) throws OracleSQLException {
+
+		return new ResponseEntity<>(mockupService.add(mockupEntity, userInfo), HttpStatus.OK);
+	}
+
+//	Route::get('/mockups/{mockup_id}', [MockupController::class, 'get']);
+	@GetMapping("/{mockup_id}")
+	@Operation(summary = "Get mockup")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<MockupEntity> get(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId) {
+		return new ResponseEntity<>(mockupService.get(mockupId, userInfo), HttpStatus.OK);
+	}
+
+//	Route::put('/mockups/{mockup_id}', [MockupController::class, 'edit']);
+	@PutMapping("/{mockup_id}")
+	@Operation(summary = "Update mockup")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<MockupEntity> edit(
+			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupEntity mockupRequest)
+			throws OracleSQLException {
+		return new ResponseEntity<>(mockupService.edit(mockupId, userInfo, mockupRequest), HttpStatus.OK);
+	}
+
+//	Route::delete('/mockups/{mockup_id}', [MockupController::class, 'delete']);
+	@DeleteMapping("/{mockup_id}")
+	@Operation(summary = "Delete mockup")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
+	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
+			@PathVariable(name = "mockup_id") Long mockupId) throws OracleSQLException {
+		return new ResponseEntity<>(mockupService.delete(mockupId, userInfo), HttpStatus.OK);
 	}
 
 }

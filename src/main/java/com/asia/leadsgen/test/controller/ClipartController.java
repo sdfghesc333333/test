@@ -30,7 +30,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import oracle.jdbc.driver.OracleSQLException;
 
-//@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "/cliparts")

@@ -19,7 +19,6 @@ import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
 import com.asia.leadsgen.test.repository.ClipartRepository;
-import com.asia.leadsgen.test.util.DateTimeUtil;
 
 import oracle.jdbc.driver.OracleSQLException;
 

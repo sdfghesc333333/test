@@ -4,8 +4,6 @@ import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,13 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.FontEntity;
-import com.asia.leadsgen.test.repository.FontRepository;
 import com.asia.leadsgen.test.service.FontService;
 import com.asia.leadsgen.test.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import oracle.jdbc.driver.OracleSQLException;
 
-//@SuppressWarnings({ "unchecked", "rawtypes" })
 @RestController
 @CrossOrigin("*")
 @RequestMapping(path = "/fonts")
@@ -40,6 +40,13 @@ public class FontController {
 
 //	Route::get('/fonts', [FontController::class, 'list']);
 	@GetMapping()
+	@Operation(summary = "List fonts")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<FontEntity>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -57,6 +64,13 @@ public class FontController {
 
 //	Route::post('/fonts', [FontController::class, 'create']);
 	@PostMapping()
+	@Operation(summary = "Create font")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement"),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<FontEntity> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
