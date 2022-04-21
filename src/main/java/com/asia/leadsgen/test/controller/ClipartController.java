@@ -24,6 +24,10 @@ import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
 import com.asia.leadsgen.test.service.ClipartService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import oracle.jdbc.driver.OracleSQLException;
 
 //@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -37,6 +41,13 @@ public class ClipartController {
 
 //	Route::get('/cliparts', [ClipartController::class, 'list']);
 	@GetMapping()
+	@Operation(summary = "List cliparts")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<List<ClipartEntityResponse>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -54,6 +65,13 @@ public class ClipartController {
 
 //	Route::post('/clipart', [ClipartController::class, 'create']);
 	@PostMapping()
+	@Operation(summary = "Create clipart")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement"),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ClipartEntityResponse> create(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -64,6 +82,13 @@ public class ClipartController {
 
 //	Route::put('/clipart/{cat_id}', [ClipartController::class, 'create']);
 	@PutMapping("/{cat_id}")
+	@Operation(summary = "Update clipart")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ClipartEntityResponse> update(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
@@ -75,6 +100,13 @@ public class ClipartController {
 
 //	Route::delete('/clipart/{cat_id}', [ClipartController::class, 'delete']);
 	@DeleteMapping("/{cat_id}")
+	@Operation(summary = "Delete clipart")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
+			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
