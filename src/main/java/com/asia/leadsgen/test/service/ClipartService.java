@@ -7,6 +7,7 @@ import java.util.List;
 import javax.security.auth.login.LoginException;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,33 @@ public class ClipartService {
 	@Autowired
 	UserService userService;
 
+	public List<ClipartEntityResponse> list(int page, int pageSize, String startDate, String endDate, String search,
+			String sort, String dir, UserInfo userInfo) {
+		List<ClipartEntityResponse> clipartEntity;
+		Pageable pageable;
+
+		Long userId = null;
+		try {
+			userId = userService.getUser(userInfo).getId();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}
+
+		if (dir.equals("asc")) {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
+		} else {
+			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
+		}
+
+		if (StringUtils.isEmpty(search)) {
+			clipartEntity = clipartRepository.list(pageable, userId);
+		} else {
+			clipartEntity = clipartRepository.listLikeName(pageable, userId, "%" + search + "%");
+		}
+
+		return clipartEntity;
+	}
+
 	public ClipartEntityResponse createOrUpdate(ClipartEntityResponse clipartEntity, UserInfo userInfo, Long catId)
 			throws OracleSQLException {
 
@@ -47,16 +75,10 @@ public class ClipartService {
 			e.printStackTrace();
 		}
 
-		System.out.println("===================================================");
-
-//		clipartEntity.setClipartCategories(clipartEntity.getClipartCategories().toString());
-//		System.out.print(clipartEntity.getClipartCategories().toString());
-
 		if (catId == null) {
 			clipartEntity.setUserId(userId);
 			clipartEntity.setType("dropdown");
 			clipartEntity.setCreatedAt(new Date());
-//			clipartEntity.setClipartCategories("");
 			if (ObjectUtils.isNotEmpty(clipartRepository.save(clipartEntity))) {
 				return clipartRepository.save(clipartEntity);
 			} else {
@@ -80,30 +102,6 @@ public class ClipartService {
 			}
 		}
 
-	}
-
-	public List<ClipartEntityResponse> list(int page, int pageSize, String startDate, String endDate, String sort,
-			String dir, UserInfo userInfo) {
-		List<ClipartEntityResponse> clipartEntity;
-		Pageable pageable;
-
-		Long userId = null;
-		try {
-			userId = userService.getUser(userInfo).getId();
-		} catch (LoginException e) {
-			e.printStackTrace();
-		}
-
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
-		}
-
-		clipartEntity = clipartRepository.list(pageable, userId, DateTimeUtil.startDateFomat(startDate),
-				DateTimeUtil.endDateFomat(endDate));
-
-		return clipartEntity;
 	}
 
 	public String delete(UserInfo userInfo, Long catId) throws OracleSQLException {

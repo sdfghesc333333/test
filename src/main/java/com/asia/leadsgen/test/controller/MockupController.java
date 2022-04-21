@@ -26,9 +26,7 @@ import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.service.MockupService;
 import com.asia.leadsgen.test.service.UserService;
-import com.asia.leadsgen.test.util.AppParams;
 
-import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -110,7 +108,7 @@ public class MockupController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<MockupEntity>> getListForMockupPage(
-			@RequestHeader(name = "x-authorization", required = true) @ApiParam(value = "Access Token", example = AppParams.TOKEN) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true) /*@ApiParam(value = "Access Token", example = AppParams.TOKEN)*/ String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,

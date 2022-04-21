@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
-import com.asia.leadsgen.test.repository.ClipartRepository;
 import com.asia.leadsgen.test.service.ClipartService;
 
 import oracle.jdbc.driver.OracleSQLException;
@@ -36,39 +35,20 @@ public class ClipartController {
 	@Autowired
 	ClipartService clipartService;
 
-	@Autowired
-	ClipartRepository clipartRepository;
-
 //	Route::get('/cliparts', [ClipartController::class, 'list']);
 	@GetMapping()
 	public ResponseEntity<List<ClipartEntityResponse>> list(
 			@RequestHeader(name = "x-authorization", required = true) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
+			@RequestParam(name = "page_size", defaultValue = "15") int pageSize,
 			@RequestParam(name = "start_date", required = false) String startDate,
 			@RequestParam(name = "end_date", required = false) String endDate,
 			@RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
-		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort,
-				dir, userInfo);
-		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
-	}
-
-	@GetMapping("/id")
-	public ResponseEntity<List<ClipartEntityResponse>> show(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestParam(name = "page", defaultValue = "1") int page,
-			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
-			@RequestParam(name = "start_date", required = false) String startDate,
-			@RequestParam(name = "end_date", required = false) String endDate,
-			@RequestParam(name = "search", required = false) String search,
-			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
-			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
-		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, startDate, endDate, sort,
-				dir, userInfo);
+		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, search, startDate, endDate,
+				sort, dir, userInfo);
 		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
 	}
 
@@ -102,4 +82,5 @@ public class ClipartController {
 
 		return new ResponseEntity<>(clipartService.delete(userInfo, catId), HttpStatus.OK);
 	}
+
 }
