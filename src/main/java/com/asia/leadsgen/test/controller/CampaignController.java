@@ -97,19 +97,6 @@ public class CampaignController {
 		return new ResponseEntity<>(campaignService.getCampaign(campaignId, userInfo), HttpStatus.OK);
 	}
 
-//	Route::put('/campaigns/{campaign_id}', [CampaignController::class, 'updateCampaign']);
-//	@PutMapping("/{campaign_id}")
-//	public ResponseEntity<Map> updateCampaign(
-//			@RequestHeader(name = "x-authorization", required = true) String accessToken,
-//			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-//			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
-//			throws LoginException {
-//		logger.info("user_info " + userInfo);
-//		return new ResponseEntity<>(
-//				campaignService.updateCampaign(campaignRequest, userService.getUser(userInfo).getId(), campaignId),
-//				HttpStatus.OK);
-//	}
-
 	@PutMapping("/{campaign_id}")
 	@Operation(summary = "Update campaigns")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
