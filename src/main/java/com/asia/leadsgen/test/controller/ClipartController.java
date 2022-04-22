@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
 import com.asia.leadsgen.test.service.ClipartService;
+import com.asia.leadsgen.test.util.AppParams;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,7 +49,7 @@ public class ClipartController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<List<ClipartEntityResponse>> list(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "15") int pageSize,
@@ -72,7 +73,7 @@ public class ClipartController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ClipartEntityResponse> create(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody ClipartEntityResponse clipartRequest) throws OracleSQLException {
 
@@ -89,7 +90,7 @@ public class ClipartController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ClipartEntityResponse> update(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
 			throws OracleSQLException {
@@ -106,7 +107,8 @@ public class ClipartController {
 			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
-	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+	public ResponseEntity<String> delete(
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
 			throws OracleSQLException {

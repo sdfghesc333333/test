@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.service.CampaignService;
+import com.asia.leadsgen.test.util.AppParams;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,14 +48,21 @@ public class CampaignController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<CampaignEntity>> list(
-			@RequestHeader(name = "x-authorization", required = true) /*@ApiParam(value = "Access Token", example = AppParams.TOKEN)*/ String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) /*
+																										 * @ApiParam(
+																										 * value =
+																										 * "Access Token"
+																										 * , example =
+																										 * AppParams.
+																										 * TOKEN)
+																										 */ String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
 			@RequestParam(name = "start_date", required = false) String startDate,
 			@RequestParam(name = "end_date", required = false) String endDate,
 			@RequestParam(name = "search", required = false) String search,
-			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
+			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) {
 
 		Page<CampaignEntity> campaignEntity = campaignService.list(page, pageSize, startDate, endDate, search, sort,
@@ -72,7 +80,7 @@ public class CampaignController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<CampaignEntity> create(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestBody CampaignEntity campaignRequest) throws OracleSQLException {
 		logger.info("user_info " + userInfo);
@@ -90,7 +98,7 @@ public class CampaignController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<CampaignEntity> getCampaign(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId) {
 		logger.info("user_info " + userInfo);
@@ -106,7 +114,7 @@ public class CampaignController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<CampaignEntity> updateCampaign(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
 			throws OracleSQLException {
@@ -125,7 +133,7 @@ public class CampaignController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<String> deleteCampaign(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId) throws OracleSQLException {
 		logger.info("user_info " + userInfo);

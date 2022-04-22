@@ -23,6 +23,7 @@ import com.asia.leadsgen.test.model.SortOptionRequestModel;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.service.ProductOptionService;
+import com.asia.leadsgen.test.util.AppParams;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,7 +48,7 @@ public class ProductOptionController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<Page<ProductOptionEntity>> list(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize,
@@ -71,7 +72,7 @@ public class ProductOptionController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ProductOptionEntity> create(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity)
 			throws OracleSQLException {
@@ -92,7 +93,7 @@ public class ProductOptionController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<ProductOptionEntity> update(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
 			@RequestBody ProductOptionEntity productOptionEntity) throws OracleSQLException {
@@ -112,7 +113,7 @@ public class ProductOptionController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
 	public ResponseEntity<String> sortOptions(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody SortOptionRequestModel optionIds)
 			throws OracleSQLException {
@@ -130,7 +131,8 @@ public class ProductOptionController {
 			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
-	public ResponseEntity<String> delete(@RequestHeader(name = "x-authorization", required = true) String accessToken,
+	public ResponseEntity<String> delete(
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
 			@RequestBody ProductOptionEntity productOptionEntity) throws OracleSQLException {

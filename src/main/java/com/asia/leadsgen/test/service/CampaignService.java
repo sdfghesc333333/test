@@ -44,9 +44,11 @@ public class CampaignService {
 		}
 
 		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).ascending());
+			pageable = PageRequest.of(page - 1, pageSize,
+					Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(com.asia.leadsgen.test.util.StringUtils.sortString(sort))).ascending());
 		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(sort).descending());
+			pageable = PageRequest.of(page - 1, pageSize,
+					Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(com.asia.leadsgen.test.util.StringUtils.sortString(sort))).descending());
 		}
 
 		if (StringUtils.isEmpty(search)) {

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.response.ServicePackResponse;
 import com.asia.leadsgen.test.repository.impl.ServicePackRepositoryImpl;
+import com.asia.leadsgen.test.util.AppParams;
 
 @RestController
 @CrossOrigin("*")
@@ -30,7 +31,7 @@ public class PlanController {
 //	Route::get('/packService', [PackServiceController::class, 'list']);
 	@GetMapping()
 	public ResponseEntity<List<ServicePackResponse>> list(
-			@RequestHeader(name = "x-authorization", required = true) String accessToken,
+			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "page_size", defaultValue = "10") int pageSize) throws LoginException {
