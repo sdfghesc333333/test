@@ -158,14 +158,6 @@
 			<version>4.1.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>2.1.13</version>
-		</dependency>
-
-
 	</dependencies>
 
 	<build>

@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+//import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Entity
@@ -22,8 +24,14 @@ public class CampaignEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(hidden = true)
+//	@ApiModelProperty(hidden = true)
 	private Long id;
 
+//	@ApiModelProperty(
+//		       required = false,
+//		       hidden = true
+//		    )
 	@Column(name = "user_id")
 	@JsonProperty(value = "user_id")
 	private Long userId;
@@ -91,6 +99,7 @@ public class CampaignEntity {
 	@JsonProperty(value = "deleted_at")
 	private Date deletedAt;
 
+	@Schema(hidden = true)
 	@Column(name = "updated_at")
 	@JsonProperty(value = "updated_at")
 	private Date updatedAt;

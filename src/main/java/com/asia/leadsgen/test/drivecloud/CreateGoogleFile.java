@@ -114,24 +114,5 @@ public class CreateGoogleFile {
 
 		return googleFile.getWebViewLink();
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		String st = "abc_defgh_xyc";
-//
-//	    for(int i = 0; i<st.length(); i++) {
-//	    	if(String.valueOf(st.charAt(i)).equals("_")) {
-//	    		System.out.println(st.charAt(i));
-//	    		String upperCase = String.valueOf(st.charAt(i+1)).toUpperCase();
-//	    		System.out.println(upperCase);
-//	    		System.out.println(st.substring(i,i+2));
-//	    		st = st.replace(st.substring(i,i+2), upperCase);
-//	    		System.out.println("replace  "+st);    		
-//	    	}
-//	    }
-//	    
-//	    System.out.println(st);
-//
-//	}
 
 }
