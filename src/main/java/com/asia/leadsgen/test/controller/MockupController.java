@@ -62,7 +62,7 @@ public class MockupController {
 			@RequestParam(name = "start_date", required = false) String startDate,
 			@RequestParam(name = "end_date", required = false) String endDate,
 			@RequestParam(name = "search", required = false) String search,
-			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
+			@RequestParam(name = "sort", defaultValue = "createdAt") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
 
 		Page<MockupEntity> mockupEntity = mockupService.list(page, pageSize, startDate, endDate, search, sort, dir,
