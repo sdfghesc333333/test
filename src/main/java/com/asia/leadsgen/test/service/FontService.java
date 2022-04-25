@@ -8,15 +8,13 @@ import javax.security.auth.login.LoginException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.FontEntity;
 import com.asia.leadsgen.test.repository.FontRepository;
+import com.asia.leadsgen.test.util.SortAndDirUtils;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -28,10 +26,9 @@ public class FontService {
 
 	@Autowired
 	UserService userService;
-	
-	public Page<FontEntity> list(int page, int pageSize, String startDate, String endDate, String search,
-			String sort, String dir, UserInfo userInfo) {
-		Pageable pageable;
+
+	public Page<FontEntity> list(int page, int pageSize, String startDate, String endDate, String search, String sort,
+			String dir, UserInfo userInfo) {
 
 		Long userId = null;
 		try {
@@ -40,12 +37,8 @@ public class FontService {
 			e.printStackTrace();
 		}
 
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).descending());
-		}
-		Page<FontEntity> fontEntity = fontRepository.findAllByUserIdAndDeletedAt(pageable, userId, null);
+		Page<FontEntity> fontEntity = fontRepository
+				.findAllByUserIdAndDeletedAt(SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null);
 
 		return fontEntity;
 	}

@@ -9,9 +9,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.exception.NotFoundException;
@@ -19,6 +16,7 @@ import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
+import com.asia.leadsgen.test.util.SortAndDirUtils;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -34,7 +32,6 @@ public class CampaignService {
 	public Page<CampaignEntity> list(int page, int pageSize, String startDate, String endDate, String search,
 			String sort, String dir, UserInfo userInfo) {
 		Page<CampaignEntity> campaignEntity;
-		Pageable pageable;
 
 		Long userId = null;
 		try {
@@ -43,21 +40,14 @@ public class CampaignService {
 			e.printStackTrace();
 		}
 
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize,
-					Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(com.asia.leadsgen.test.util.StringUtils.sortString(sort))).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize,
-					Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(com.asia.leadsgen.test.util.StringUtils.sortString(sort))).descending());
-		}
-
 		if (StringUtils.isEmpty(search)) {
-			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(pageable, userId, null,
+			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndCreatedAtBetween(
+					SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null,
 					DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
 		} else {
-			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(pageable,
-					userId, null, "%" + search + "%", DateTimeUtil.startDateFomat(startDate),
-					DateTimeUtil.endDateFomat(endDate));
+			campaignEntity = campaignRepository.findAllByUserIdAndDeletedAtAndNameLikeAndCreatedAtBetween(
+					SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null, "%" + search + "%",
+					DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
 		}
 
 		return campaignEntity;

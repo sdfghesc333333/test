@@ -23,6 +23,8 @@ import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.service.CampaignService;
 import com.asia.leadsgen.test.util.AppParams;
+import com.google.api.client.json.Json;
+import com.google.gson.Gson;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -82,9 +84,15 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> create(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody CampaignEntity campaignRequest) throws OracleSQLException {
+			@RequestBody CampaignEntity campaignRequest /* String json */) throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 
+//		logger.info("json " + json.toString());
+//		
+//		Gson g = new Gson(); 
+//		CampaignEntity campaignRequest = g.fromJson(json, CampaignEntity.class);
+//
+//		logger.info("json " + p);
 		return new ResponseEntity<>(campaignService.create(campaignRequest, userInfo), HttpStatus.OK);
 	}
 

@@ -9,9 +9,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
@@ -19,6 +16,7 @@ import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
 import com.asia.leadsgen.test.repository.MockupRepository;
+import com.asia.leadsgen.test.util.SortAndDirUtils;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -33,8 +31,6 @@ public class MockupService {
 
 	public Page<MockupEntity> list(int page, int pageSize, String startDate, String endDate, String search, String sort,
 			String dir, UserInfo userInfo) {
-		Page<MockupEntity> mockupEntity;
-		Pageable pageable;
 
 		Long userId = null;
 		try {
@@ -43,13 +39,8 @@ public class MockupService {
 			e.printStackTrace();
 		}
 
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).descending());
-		}
-
-		mockupEntity = mockupRepository.findAllByUserIdAndDeletedAt(pageable, userId, null);
+		Page<MockupEntity> mockupEntity = mockupRepository
+				.findAllByUserIdAndDeletedAt(SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null);
 
 		return mockupEntity;
 	}
@@ -58,7 +49,6 @@ public class MockupService {
 			String search, String sort, String dir, UserInfo userInfo) {
 
 		Page<MockupEntity> mockupEntity;
-		Pageable pageable;
 
 		Long userId = null;
 		try {
@@ -67,16 +57,12 @@ public class MockupService {
 			e.printStackTrace();
 		}
 
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).descending());
-		}
-
 		if (StringUtils.isEmpty(search)) {
-			mockupEntity = mockupRepository.findAllByUserIdAndDeletedAt(pageable, userId, null);
+			mockupEntity = mockupRepository
+					.findAllByUserIdAndDeletedAt(SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null);
 		} else {
-			mockupEntity = mockupRepository.findAllByUserIdAndDeletedAtAndNameLike(pageable, userId, null, search);
+			mockupEntity = mockupRepository.findAllByUserIdAndDeletedAtAndNameLike(
+					SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, null, search);
 		}
 
 		return mockupEntity;

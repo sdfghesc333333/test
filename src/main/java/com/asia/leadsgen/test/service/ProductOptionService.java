@@ -8,9 +8,6 @@ import javax.security.auth.login.LoginException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.asia.leadsgen.test.exception.NotFoundException;
@@ -20,6 +17,7 @@ import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
+import com.asia.leadsgen.test.util.SortAndDirUtils;
 
 import oracle.jdbc.driver.OracleSQLException;
 
@@ -137,7 +135,6 @@ public class ProductOptionService {
 
 	public Page<ProductOptionEntity> list(Long campaignId, int page, int pageSize, String startDate, String endDate,
 			String sort, String dir, UserInfo userInfo) {
-		Pageable pageable;
 
 		Long userId = null;
 		try {
@@ -146,18 +143,13 @@ public class ProductOptionService {
 			e.printStackTrace();
 		}
 
-		if (dir.equals("asc")) {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).ascending());
-		} else {
-			pageable = PageRequest.of(page - 1, pageSize, Sort.by(com.asia.leadsgen.test.util.StringUtils.sortString(sort)).descending());
-		}
-
 		if (ObjectUtils
 				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
 			Page<ProductOptionEntity> productOptionEntities = productOptionRepository
-					.findAllByUserIdAndCampaignIdAndCreatedAtBetween(pageable, userId, campaignId,
+					.findAllByUserIdAndCampaignIdAndCreatedAtBetween(
+							SortAndDirUtils.sortAndDir(page, pageSize, sort, dir), userId, campaignId,
 							DateTimeUtil.startDateFomat(startDate), DateTimeUtil.endDateFomat(endDate));
 
 			return productOptionEntities;
