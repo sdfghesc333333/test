@@ -71,11 +71,9 @@ public class MockupService {
 	public MockupEntity add(MockupEntity mockupEntity, UserInfo userInfo) throws OracleSQLException {
 		try {
 			mockupEntity.setUserId(userService.getUser(userInfo).getId());
+			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()));
 		} catch (LoginException e) {
 			e.printStackTrace();
-		}
-		try {
-			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -95,6 +93,7 @@ public class MockupService {
 		} catch (LoginException e) {
 			e.printStackTrace();
 		}
+		
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			return mockupEntity;
 		} else {
@@ -109,6 +108,7 @@ public class MockupService {
 		} catch (LoginException e1) {
 			e1.printStackTrace();
 		}
+		
 		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			mockupEntity.setUserId(userId);

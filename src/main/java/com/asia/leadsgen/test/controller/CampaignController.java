@@ -23,8 +23,6 @@ import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
 import com.asia.leadsgen.test.service.CampaignService;
 import com.asia.leadsgen.test.util.AppParams;
-import com.google.api.client.json.Json;
-import com.google.gson.Gson;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -75,6 +73,7 @@ public class CampaignController {
 //	Route::post('/campaigns', [CampaignController::class, 'create']);
 	@PostMapping()
 	@Operation(summary = "Create campaigns")
+//	@ApiOperation(value = "Get list of Students in the System ", response = Iterable.class, tags = "getStudents")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "201", description = "Not implement"),
 			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),

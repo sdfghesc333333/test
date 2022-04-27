@@ -64,12 +64,9 @@ public class ClipartService {
 		Long userId = null;
 		try {
 			userId = userService.getUser(userInfo).getId();
+			clipartEntity.setThumbnail(CreateGoogleFile.uploadFileImage(clipartEntity.getThumbnail()));
 		} catch (LoginException e) {
 			e.printStackTrace();
-		}
-
-		try {
-			clipartEntity.setThumbnail(CreateGoogleFile.uploadFileImage(clipartEntity.getThumbnail()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

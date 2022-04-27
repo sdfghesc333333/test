@@ -47,15 +47,13 @@ public class FontService {
 
 		try {
 			fontEntity.setUserId(userService.getUser(userInfo).getId());
+			fontEntity.setPath(CreateGoogleFile.uploadGoogleDrive(fontEntity.getPath()));
 		} catch (LoginException e1) {
 			e1.printStackTrace();
-		}
-
-		try {
-			fontEntity.setPath(CreateGoogleFile.uploadGoogleDrive(fontEntity.getPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		fontEntity.setCreatedAt(new Date());
 		if (ObjectUtils.isNotEmpty(fontRepository.save(fontEntity))) {
 			return fontRepository.save(fontEntity);
