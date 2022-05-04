@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
+import com.asia.leadsgen.test.model.request.CampaignRequest;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
 import com.asia.leadsgen.test.util.SortAndDirUtils;
@@ -53,15 +54,29 @@ public class CampaignService {
 		return campaignEntity;
 	}
 
-	public CampaignEntity create(CampaignEntity campaignEntity, UserInfo userInfo) throws OracleSQLException {
+	public CampaignEntity create(CampaignRequest campaignRequest, UserInfo userInfo) throws OracleSQLException {
+		CampaignEntity campaignEntity = new CampaignEntity();
 		try {
-			campaignEntity.setUserId(userService.getUser(userInfo).getId());
+			campaignEntity = new CampaignEntity(null, userService.getUser(userInfo).getId(),
+					campaignRequest.getProductId(), campaignRequest.getHandle(), campaignRequest.getName(),
+					campaignRequest.getThumbnail(), null, null, null, null, null, null,
+					campaignRequest.getFulfillmentId(), campaignRequest.getProductTypeId(), 1, "png", null, new Date(),
+					null, null);
 		} catch (LoginException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		campaignEntity.setStatus(1);
-		campaignEntity.setCreatedAt(new Date());
-		campaignEntity.setExportFileType("png");
+//		CampaignEntity campaignEntity = CampaignEntity.class.cast(obj);
+//		System.out.println(campaignEntity);
+//		try {
+//			campaignEntity.setUserId(userService.getUser(userInfo).getId());
+//		} catch (LoginException e) {
+//			e.printStackTrace();
+//		}
+//
+//		campaignEntity.setStatus(1);
+//		campaignEntity.setCreatedAt(new Date());
+//		campaignEntity.setExportFileType("png");
 		logger.info("save : " + campaignRepository.save(campaignEntity));
 		if (ObjectUtils.isNotEmpty(campaignRepository.save(campaignEntity))) {
 			return campaignRepository.save(campaignEntity);
@@ -70,7 +85,7 @@ public class CampaignService {
 		}
 	}
 
-	public CampaignEntity updateCampaign(CampaignEntity campaignRequest, UserInfo userInfo, Long campaignId)
+	public CampaignEntity updateCampaign(CampaignRequest campaignRequest, UserInfo userInfo, Long campaignId)
 			throws OracleSQLException {
 		CampaignEntity campaignEntity = new CampaignEntity();
 		try {
@@ -84,7 +99,6 @@ public class CampaignService {
 			campaignEntity.setHandle(campaignRequest.getHandle());
 			campaignEntity.setName(campaignRequest.getName());
 			campaignEntity.setUpdatedAt(new Date());
-			campaignEntity.setExportFileType("png");
 			if (ObjectUtils.isNotEmpty(campaignRepository.save(campaignEntity))) {
 				return campaignRepository.save(campaignEntity);
 			} else {

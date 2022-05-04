@@ -1,13 +1,11 @@
 package com.asia.leadsgen.test.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.Set;
 
-@Getter
-@Setter
+import lombok.Data;
+import lombok.ToString;
+
+@Data
 @ToString
 public class UserInfo {
 	private String userId;

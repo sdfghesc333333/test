@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.CampaignEntity;
+import com.asia.leadsgen.test.model.request.CampaignRequest;
 import com.asia.leadsgen.test.service.CampaignService;
 import com.asia.leadsgen.test.util.AppParams;
 
@@ -83,7 +84,8 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> create(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody CampaignEntity campaignRequest /* String json */) throws OracleSQLException {
+//			@RequestBody CampaignEntity campaignRequest /* String json */) throws OracleSQLException {
+			@RequestBody CampaignRequest campaignRequest /* String json */) throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 
 //		logger.info("json " + json.toString());
@@ -92,6 +94,7 @@ public class CampaignController {
 //		CampaignEntity campaignRequest = g.fromJson(json, CampaignEntity.class);
 //
 //		logger.info("json " + p);
+		System.out.println("Controller: " + campaignRequest);
 		return new ResponseEntity<>(campaignService.create(campaignRequest, userInfo), HttpStatus.OK);
 	}
 
@@ -123,7 +126,7 @@ public class CampaignController {
 	public ResponseEntity<CampaignEntity> updateCampaign(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody CampaignEntity campaignRequest)
+			@PathVariable(name = "campaign_id") Long campaignId, CampaignRequest campaignRequest)
 			throws OracleSQLException {
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(campaignService.updateCampaign(campaignRequest, userInfo, campaignId),
