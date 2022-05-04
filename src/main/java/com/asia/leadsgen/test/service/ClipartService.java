@@ -24,6 +24,8 @@ import com.asia.leadsgen.test.repository.ClipartRepository;
 import oracle.jdbc.driver.OracleSQLException;
 
 @Service
+
+
 public class ClipartService {
 
 	@Autowired
