@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
-import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
+import com.asia.leadsgen.test.model.entity.ClipartEntity;
+import com.asia.leadsgen.test.model.request.ClipartRequest;
 import com.asia.leadsgen.test.service.ClipartService;
 import com.asia.leadsgen.test.util.AppParams;
 
@@ -48,7 +49,7 @@ public class ClipartController {
 			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
-	public ResponseEntity<List<ClipartEntityResponse>> list(
+	public ResponseEntity<List<ClipartEntity>> list(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@RequestParam(name = "page", defaultValue = "1") int page,
@@ -58,8 +59,8 @@ public class ClipartController {
 			@RequestParam(name = "search", required = false) String search,
 			@RequestParam(name = "sort", defaultValue = "created_at") String sort,
 			@RequestParam(name = "dir", defaultValue = "desc") String dir) throws LoginException {
-		List<ClipartEntityResponse> clipartnEntities = clipartService.list(page, pageSize, search, startDate, endDate,
-				sort, dir, userInfo);
+		List<ClipartEntity> clipartnEntities = clipartService.list(page, pageSize, search, startDate, endDate, sort,
+				dir, userInfo);
 		return new ResponseEntity<>(clipartnEntities, HttpStatus.OK);
 	}
 
@@ -72,10 +73,10 @@ public class ClipartController {
 			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
-	public ResponseEntity<ClipartEntityResponse> create(
+	public ResponseEntity<ClipartEntity> create(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntityResponse clipartRequest) throws OracleSQLException {
+			@RequestBody ClipartRequest clipartRequest) throws OracleSQLException {
 
 		return new ResponseEntity<>(clipartService.createOrUpdate(clipartRequest, userInfo, null), HttpStatus.OK);
 	}
@@ -89,10 +90,10 @@ public class ClipartController {
 			@ApiResponse(responseCode = "403", description = "Not implement", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
 			@ApiResponse(responseCode = "500", description = "Internal Sever Error", content = @Content) })
-	public ResponseEntity<ClipartEntityResponse> update(
+	public ResponseEntity<ClipartEntity> update(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
+			@RequestBody ClipartRequest clipartRequest, @PathVariable(name = "cat_id") Long catId)
 			throws OracleSQLException {
 
 		return new ResponseEntity<>(clipartService.createOrUpdate(clipartRequest, userInfo, catId), HttpStatus.OK);
@@ -110,7 +111,7 @@ public class ClipartController {
 	public ResponseEntity<String> delete(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody ClipartEntityResponse clipartRequest, @PathVariable(name = "cat_id") Long catId)
+			@RequestBody ClipartEntity clipartRequest, @PathVariable(name = "cat_id") Long catId)
 			throws OracleSQLException {
 
 		return new ResponseEntity<>(clipartService.delete(userInfo, catId), HttpStatus.OK);

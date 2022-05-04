@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
-import com.asia.leadsgen.test.model.entity.ClipartEntityResponse;
+import com.asia.leadsgen.test.model.entity.ClipartEntity;
+import com.asia.leadsgen.test.model.request.ClipartRequest;
 import com.asia.leadsgen.test.repository.ClipartRepository;
 
 import oracle.jdbc.driver.OracleSQLException;
@@ -31,9 +32,9 @@ public class ClipartService {
 	@Autowired
 	UserService userService;
 
-	public List<ClipartEntityResponse> list(int page, int pageSize, String startDate, String endDate, String search,
+	public List<ClipartEntity> list(int page, int pageSize, String startDate, String endDate, String search,
 			String sort, String dir, UserInfo userInfo) {
-		List<ClipartEntityResponse> clipartEntity;
+		List<ClipartEntity> clipartEntity;
 		Pageable pageable;
 
 		Long userId = null;
@@ -58,16 +59,17 @@ public class ClipartService {
 		return clipartEntity;
 	}
 
-	public ClipartEntityResponse createOrUpdate(ClipartEntityResponse clipartEntity, UserInfo userInfo, Long catId)
+	public ClipartEntity createOrUpdate(ClipartRequest clipartRequest, UserInfo userInfo, Long catId)
 			throws OracleSQLException {
 
+		ClipartEntity clipartEntity = new ClipartEntity();
 		Long userId = null;
 		try {
 			userId = userService.getUser(userInfo).getId();
-			clipartEntity.setThumbnail(CreateGoogleFile.uploadFileImage(clipartEntity.getThumbnail()));
-		} catch (LoginException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			clipartEntity = new ClipartEntity(catId, userId, clipartRequest.getName(),
+					CreateGoogleFile.uploadFileImage(clipartEntity.getThumbnail()), clipartRequest.getType(), null,
+					null, new Date(), null);
+		} catch (LoginException | IOException e) {
 			e.printStackTrace();
 		}
 
@@ -81,7 +83,7 @@ public class ClipartService {
 				throw new OracleSQLException();
 			}
 		} else {
-			ClipartEntityResponse entity = clipartRepository.getById(userId, catId);
+			ClipartEntity entity = clipartRepository.getById(userId, catId);
 			if (ObjectUtils.isNotEmpty(catId)) {
 				entity.setClipartCategories(clipartEntity.getClipartCategories());
 				entity.setName(clipartEntity.getName());
@@ -109,7 +111,7 @@ public class ClipartService {
 			e.printStackTrace();
 		}
 
-		ClipartEntityResponse entity = clipartRepository.getById(userId, catId);
+		ClipartEntity entity = clipartRepository.getById(userId, catId);
 
 		if (ObjectUtils.isNotEmpty(entity)) {
 			entity.setDeletedAt(new Date());
