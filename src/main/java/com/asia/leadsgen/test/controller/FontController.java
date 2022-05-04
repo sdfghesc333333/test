@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.FontEntity;
+import com.asia.leadsgen.test.model.request.FontRequest;
 import com.asia.leadsgen.test.service.FontService;
 import com.asia.leadsgen.test.service.UserService;
 import com.asia.leadsgen.test.util.AppParams;
@@ -75,8 +76,8 @@ public class FontController {
 	public ResponseEntity<FontEntity> create(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody FontEntity fontEntity) throws OracleSQLException {
+			@RequestBody FontRequest fontRequest) throws OracleSQLException {
 
-		return new ResponseEntity<>(fontService.create(fontEntity, userInfo), HttpStatus.OK);
+		return new ResponseEntity<>(fontService.create(fontRequest, userInfo), HttpStatus.OK);
 	}
 }

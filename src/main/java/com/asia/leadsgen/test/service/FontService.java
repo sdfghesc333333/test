@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.FontEntity;
+import com.asia.leadsgen.test.model.request.FontRequest;
 import com.asia.leadsgen.test.repository.FontRepository;
 import com.asia.leadsgen.test.util.SortAndDirUtils;
 
@@ -43,18 +44,16 @@ public class FontService {
 		return fontEntity;
 	}
 
-	public FontEntity create(FontEntity fontEntity, UserInfo userInfo) throws OracleSQLException {
+	public FontEntity create(FontRequest fontRequest, UserInfo userInfo) throws OracleSQLException {
 
+		FontEntity fontEntity = new FontEntity();
 		try {
-			fontEntity.setUserId(userService.getUser(userInfo).getId());
-			fontEntity.setPath(CreateGoogleFile.uploadGoogleDrive(fontEntity.getPath()));
-		} catch (LoginException e1) {
-			e1.printStackTrace();
-		} catch (IOException e) {
+			fontEntity = new FontEntity(null, userService.getUser(userInfo).getId(), fontRequest.getName(),
+					CreateGoogleFile.uploadGoogleDrive(fontEntity.getPath()), null, new Date(), null);
+		} catch (LoginException | IOException e) {
 			e.printStackTrace();
 		}
-		
-		fontEntity.setCreatedAt(new Date());
+
 		if (ObjectUtils.isNotEmpty(fontRepository.save(fontEntity))) {
 			return fontRepository.save(fontEntity);
 		} else {

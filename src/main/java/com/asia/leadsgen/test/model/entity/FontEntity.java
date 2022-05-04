@@ -11,11 +11,15 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "fonts")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FontEntity {
 
 	@Id
@@ -26,21 +30,21 @@ public class FontEntity {
 	@Column(name = "user_id")
 	@JsonProperty(value = "user_id")
 	private Long userId;
-	
+
 	@Column(name = "name")
 	private String name;
-	
+
 	@Column(name = "path")
 	private String path;
-	
+
 	@Column(name = "deleted_at")
 	@JsonProperty(value = "deleted_at")
 	private Date deletedAt;
-	
+
 	@Column(name = "created_at")
 	@JsonProperty(value = "created_at")
 	private Date createdAt;
-	
+
 	@Column(name = "updated_at")
 	@JsonProperty(value = "updated_at")
 	private Date updatedAt;
