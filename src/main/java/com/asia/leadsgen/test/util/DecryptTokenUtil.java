@@ -33,15 +33,15 @@ public class DecryptTokenUtil {
 
 		UserInfo user = new UserInfo();
 		user.setUserId(userId);
-		user.setEmail(email);
-		user.setOwner(isOwner.equalsIgnoreCase("yes"));
-		user.setExp(expTime);
+		user.setEmail1(email);
+		user.setOwner1(isOwner.equalsIgnoreCase("yes"));
+		user.setExp1(expTime);
 
 		Set<String> domainNames = new HashSet<>();
 		Set<String> module = new HashSet<>();
 		Set<String> global = new HashSet<>();
 
-		if (!user.isOwner()) {
+		if (!user.isOwner1()) {
 			String domains = ParamUtil.getString(decodeMap, AppParams.DOMAINS);
 			String modulePermissions = ParamUtil.getString(decodeMap, AppParams.MODULE_PERMISSIONS);
 			String globalPermissions = ParamUtil.getString(decodeMap, AppParams.GLOBAL_PERMISSIONS);
