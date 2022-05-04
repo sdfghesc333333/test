@@ -10,12 +10,12 @@ import java.util.Set;
 @Setter
 @ToString
 public class UserInfo {
-    private String userId;
-    private String aspRefId;
-    private boolean isOwner;
-    private Long exp;
-    private String email;
-    private Set<String> domains;
-    private Set<String> globalPermissions;
-    private Set<String> modulePermissions;
+	private String userId;
+	private String aspRefId;
+	private boolean isOwner;
+	private Long exp;
+	private String email;
+	private Set<String> domains;
+	private Set<String> globalPermissions;
+	private Set<String> modulePermissions;
 }
