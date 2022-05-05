@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.asia.leadsgen.test.model.SortOptionRequestModel;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
+import com.asia.leadsgen.test.model.request.ProductOptionRequest;
 import com.asia.leadsgen.test.service.ProductOptionService;
 import com.asia.leadsgen.test.util.AppParams;
 
@@ -74,13 +75,13 @@ public class ProductOptionController {
 	public ResponseEntity<ProductOptionEntity> create(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionEntity productOptionEntity)
+			@PathVariable(name = "campaign_id") Long campaignId, @RequestBody ProductOptionRequest productOptionRequest)
 			throws OracleSQLException {
-		logger.info("======================== " + productOptionEntity);
+		logger.info("======================== " + productOptionRequest);
 		logger.info("user_info " + userInfo);
 
-		return new ResponseEntity<>(productOptionService.createProductOption(productOptionEntity, userInfo, campaignId),
-				HttpStatus.OK);
+		return new ResponseEntity<>(
+				productOptionService.createProductOption(productOptionRequest, userInfo, campaignId), HttpStatus.OK);
 	}
 
 //	Route::put('/campaigns/{campaign_id}/options/{option_id}', [ProductOptionController::class, 'updateOption']);
@@ -96,11 +97,11 @@ public class ProductOptionController {
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
 			@PathVariable(name = "campaign_id") Long campaignId, @PathVariable(name = "option_id") Long optionId,
-			@RequestBody ProductOptionEntity productOptionEntity) throws OracleSQLException {
-		logger.info("======================== " + productOptionEntity);
+			@RequestBody ProductOptionRequest productOptionRequest) throws OracleSQLException {
+		logger.info("======================== " + productOptionRequest);
 		logger.info("user_info " + userInfo);
 		return new ResponseEntity<>(
-				productOptionService.updateOption(productOptionEntity, userInfo, campaignId, optionId), HttpStatus.OK);
+				productOptionService.updateOption(productOptionRequest, userInfo, campaignId, optionId), HttpStatus.OK);
 	}
 
 //	Route::post('/campaigns/{campaign_id}/options/sort', [ProductOptionController::class, 'sortOptions']);

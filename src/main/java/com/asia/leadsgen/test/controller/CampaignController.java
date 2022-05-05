@@ -96,6 +96,8 @@ public class CampaignController {
 //		logger.info("json " + p);
 		System.out.println("Controller: " + campaignRequest);
 		return new ResponseEntity<>(campaignService.create(campaignRequest, userInfo), HttpStatus.OK);
+		
+		
 	}
 
 //	Route::get('/campaigns/{campaign_id}', [CampaignController::class, 'getCampaign']);

@@ -14,6 +14,7 @@ import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.SortOptionRequestModel;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.ProductOptionEntity;
+import com.asia.leadsgen.test.model.request.ProductOptionRequest;
 import com.asia.leadsgen.test.repository.CampaignRepository;
 import com.asia.leadsgen.test.repository.ProductOptionRepository;
 import com.asia.leadsgen.test.util.DateTimeUtil;
@@ -33,7 +34,7 @@ public class ProductOptionService {
 	@Autowired
 	UserService userService;
 
-	public ProductOptionEntity createProductOption(ProductOptionEntity productOptionEntity, UserInfo userInfo,
+	public ProductOptionEntity createProductOption(ProductOptionRequest productOptionRequest, UserInfo userInfo,
 			long campaignId) throws OracleSQLException {
 
 		Long userId = null;
@@ -47,9 +48,13 @@ public class ProductOptionService {
 				.isEmpty(campaignRepository.findByIdAndUserIdAndStatusAndDeletedAt(campaignId, userId, 1, null))) {
 			throw new NotFoundException("Campaign not exist");
 		} else {
-			productOptionEntity.setUserId(userId);
-			productOptionEntity.setCampaignId(campaignId);
-			productOptionEntity.setCreatedAt(new Date());
+			ProductOptionEntity productOptionEntity = new ProductOptionEntity(null, userId, campaignId,
+					productOptionRequest.getType(), productOptionRequest.getTitle(),
+					productOptionRequest.getClipartCategoryId(), productOptionRequest.getClipartCategories(),
+					productOptionRequest.getCondition(), productOptionRequest.getSettings(),
+					productOptionRequest.getBoundSettings(), productOptionRequest.getClipartCategotyType(),
+					productOptionRequest.getConditionType(), productOptionRequest.getPosition(), null, new Date(),
+					null);
 			if (ObjectUtils.isNotEmpty(productOptionRepository.save(productOptionEntity))) {
 				return productOptionRepository.save(productOptionEntity);
 			} else {
@@ -58,7 +63,7 @@ public class ProductOptionService {
 		}
 	}
 
-	public ProductOptionEntity updateOption(ProductOptionEntity productOptionEntity, UserInfo userInfo, long campaignId,
+	public ProductOptionEntity updateOption(ProductOptionRequest productOptionRequest, UserInfo userInfo, long campaignId,
 			long optionId) throws OracleSQLException {
 
 		Long userId = null;
@@ -78,8 +83,9 @@ public class ProductOptionService {
 			} else {
 				ProductOptionEntity optionEntity = productOptionRepository
 						.findByIdAndUserIdAndCampaignIdAndDeletedAt(optionId, userId, campaignId, null);
-				optionEntity.setType(productOptionEntity.getType());
-				optionEntity.setTitle(productOptionEntity.getTitle());
+				optionEntity.setType(productOptionRequest.getType());
+				optionEntity.setTitle(productOptionRequest.getTitle());
+				optionEntity.setConditionType(productOptionRequest.getConditionType());
 				optionEntity.setUpdatedAt(new Date());
 
 				logger.info("product option : " + optionEntity);
