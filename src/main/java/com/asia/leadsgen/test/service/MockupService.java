@@ -15,6 +15,7 @@ import com.asia.leadsgen.test.drivecloud.CreateGoogleFile;
 import com.asia.leadsgen.test.exception.NotFoundException;
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
+import com.asia.leadsgen.test.model.request.MockupRequest;
 import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.util.SortAndDirUtils;
 
@@ -68,16 +69,17 @@ public class MockupService {
 		return mockupEntity;
 	}
 
-	public MockupEntity add(MockupEntity mockupEntity, UserInfo userInfo) throws OracleSQLException {
+	public MockupEntity add(MockupRequest mockupRequest, UserInfo userInfo) throws OracleSQLException {
+		MockupEntity mockupEntity = new MockupEntity();
 		try {
-			mockupEntity.setUserId(userService.getUser(userInfo).getId());
-			mockupEntity.setFilePath(CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()));
-		} catch (LoginException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			mockupEntity = new MockupEntity(null, userService.getUser(userInfo).getId(), mockupRequest.getName(),
+					CreateGoogleFile.uploadMockupGoogleDrive(mockupEntity.getFilePath()), mockupRequest.getHeight(),
+					mockupRequest.getWidth(), mockupRequest.getPrintareas(), mockupRequest.getConditions(), null,
+					new Date(), null);
+		} catch (LoginException | IOException e) {
 			e.printStackTrace();
 		}
-		mockupEntity.setCreatedAt(new Date());
+
 		if (ObjectUtils.isNotEmpty(mockupRepository.save(mockupEntity))) {
 			return mockupRepository.save(mockupEntity);
 		} else {
@@ -93,7 +95,7 @@ public class MockupService {
 		} catch (LoginException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			return mockupEntity;
 		} else {
@@ -101,14 +103,14 @@ public class MockupService {
 		}
 	}
 
-	public MockupEntity edit(Long mockupId, UserInfo userInfo, MockupEntity mockupRequest) throws OracleSQLException {
+	public MockupEntity edit(Long mockupId, UserInfo userInfo, MockupRequest mockupRequest) throws OracleSQLException {
 		Long userId = null;
 		try {
 			userId = userService.getUser(userInfo).getId();
 		} catch (LoginException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		MockupEntity mockupEntity = mockupRepository.findByIdAndUserIdAndDeletedAt(mockupId, userId, null);
 		if (ObjectUtils.isNotEmpty(mockupEntity)) {
 			mockupEntity.setUserId(userId);

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.asia.leadsgen.test.model.UserInfo;
 import com.asia.leadsgen.test.model.entity.MockupEntity;
+import com.asia.leadsgen.test.model.request.MockupRequest;
 import com.asia.leadsgen.test.repository.MockupRepository;
 import com.asia.leadsgen.test.service.MockupService;
 import com.asia.leadsgen.test.service.UserService;
@@ -115,9 +116,9 @@ public class MockupController {
 	public ResponseEntity<MockupEntity> add(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@RequestBody MockupEntity mockupEntity) throws OracleSQLException {
+			@RequestBody MockupRequest mockupRequest) throws OracleSQLException {
 
-		return new ResponseEntity<>(mockupService.add(mockupEntity, userInfo), HttpStatus.OK);
+		return new ResponseEntity<>(mockupService.add(mockupRequest, userInfo), HttpStatus.OK);
 	}
 
 //	Route::get('/mockups/{mockup_id}', [MockupController::class, 'get']);
@@ -148,7 +149,7 @@ public class MockupController {
 	public ResponseEntity<MockupEntity> edit(
 			@RequestHeader(name = "x-authorization", required = true, defaultValue = AppParams.TOKEN) String accessToken,
 			@RequestAttribute(name = "user_info", required = true) UserInfo userInfo,
-			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupEntity mockupRequest)
+			@PathVariable(name = "mockup_id") Long mockupId, @RequestBody MockupRequest mockupRequest)
 			throws OracleSQLException {
 		return new ResponseEntity<>(mockupService.edit(mockupId, userInfo, mockupRequest), HttpStatus.OK);
 	}

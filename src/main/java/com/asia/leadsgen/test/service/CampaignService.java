@@ -60,8 +60,9 @@ public class CampaignService {
 			campaignEntity = new CampaignEntity(null, userService.getUser(userInfo).getId(),
 					campaignRequest.getProductId(), campaignRequest.getHandle(), campaignRequest.getName(),
 					campaignRequest.getThumbnail(), null, null, null, null, null, null,
-					campaignRequest.getFulfillmentId(), campaignRequest.getProductTypeId(), 1, "png", null, new Date(),
-					null, null);
+					campaignRequest.getFulfillmentId() == 0 ? null : campaignRequest.getFulfillmentId(),
+					campaignRequest.getProductTypeId() == 0 ? null : campaignRequest.getProductTypeId(), 1, "png", null,
+					new Date(), null, null);
 		} catch (LoginException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

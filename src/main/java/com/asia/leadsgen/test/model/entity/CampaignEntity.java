@@ -28,7 +28,7 @@ public class CampaignEntity {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Schema(hidden = true)
+//	@Schema(hidden = true)
 //	@ApiModelProperty(hidden = true)
 	private Long id;
 
